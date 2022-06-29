@@ -1,0 +1,9 @@
+server/node_modules/
+server/.vscode/
+viewer/node_modules/
+viewer/.vscode
+viewer/dist/
+*.vscode
+server.rar
+viewer.rar
+

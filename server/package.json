@@ -1,0 +1,42 @@
+{
+  "name": "supervisorio",
+  "version": "1.2.4",
+  "description": "Supervisório geral para linha de pintura (E-coat, Pó e Líquida)",
+  "pkg": {
+    "assets": [
+      "api/**/*",
+      "Eqptos.js",
+      "contatos.js",
+      "main.js"
+    ],
+    "targets": [
+        "node14-win-x64"
+    ]
+  },
+  "main": "server.js",
+  "bin": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    ":)"
+  ],
+  "author": "Gustavo Andrade Ernesto",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "ads-client": "^1.10.3",
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "modbus-serial": "^8.0.3",
+    "mssql": "^6.3.1",
+    "nodemailer": "^6.6.0",
+    "socket.io": "^3.1.2",
+    "socket.io-client": "^3.1.3",
+    "totalvoice-node": "^1.10.0"
+  }
+}
