@@ -1712,11 +1712,11 @@ var Variaveis = {
         endereco: "Global.FALHA_49",
         casasDec: null,
         valor: false,
-        mensagem: "Falha de Teste!!!",
+        mensagem: "Teste!!!",
         flagAviso: false,
         flagBD: false,
         avisar: [
-            { nome: "Gustavo2", sms: false, telefone: true, email: true },
+            { nome: "Gustavo2", sms: false, telefone: false, email: true },
         ],
         periodoBD: 0,
         condBD: "== true",

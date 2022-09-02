@@ -33,7 +33,7 @@ const clientPLC_PP = new ads.Client({
 
 
 
-/* teste!
+/* #Teste!
 // Opção para conexão sem o ADS da Beckhoff
 const clientPLC_PP = new ads.Client({
     localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file

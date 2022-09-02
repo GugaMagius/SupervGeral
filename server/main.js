@@ -39,9 +39,10 @@ module.exports.listaFalhas = listaFalhas
 
 // função para verificar situação das falhas e atualizar clientes
 function verificaFalhas() {
-    if (Falhas.length > 0) {
+    let variavFalhas = Object.keys(Falhas)
+    if (variavFalhas.length > 0) {
         console.log("Falhas presente: ", Falhas)
-        Object.keys(Falhas).forEach(element => {
+        variavFalhas.forEach(element => {
             if  ((Variaveis[element]["valor"] !== true) && (Variaveis[element]["cor"] !== corFalha)) {
                 console.log("Excluindo falha da lista: ", element)
                 
@@ -57,6 +58,16 @@ function verificaFalhas() {
 }
 
 setInterval(verificaFalhas, 60000)
+
+
+let teste = false
+if (teste === false) {
+
+    Variaveis["falha_TmpPnlGer"]["valor"] = true
+    Falhas["falha_TmpPnlGer"] = "Falha de temperatura no painel geral do Ecoat!"
+    teste = true
+
+}
 
 
 

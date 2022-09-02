@@ -36,7 +36,7 @@ const clientPLCecoat = new ads.Client({
 
 
 
-/* teste!
+/* #Teste!
 
 // Opção para conexão sem o ADS da Beckhoff
 const clientPLCecoat = new ads.Client({
