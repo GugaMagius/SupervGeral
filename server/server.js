@@ -7,9 +7,10 @@ const bd = require('./api/BD/server')
 
 const plcEcoat = require('./api/comunicacao/Ecoat/server')
 
-const plcPinturaPo = require('./api/comunicacao/PinturaPo/server')
 
-const modbus = require('./api/comunicacao/Modbus/server')
+//#Teste const plcPinturaPo = require('./api/comunicacao/PinturaPo/server')
+
+//#Teste const modbus = require('./api/comunicacao/Modbus/server')
 
 /*
 main

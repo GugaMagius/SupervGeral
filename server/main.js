@@ -1,6 +1,7 @@
 var Variaveis = require('./Eqptos').Variaveis;
-var socketFl = require('./api/socket/server');
-var bd = require('./api/BD/server');
+const socketFl = require('./api/socket/server');
+const bd = require('./api/BD/server');
+
 
 const corOK = "Lightgreen"
 const corAlerta = "#ffff66"
@@ -41,7 +42,6 @@ module.exports.listaFalhas = listaFalhas
 function verificaFalhas() {
     let variavFalhas = Object.keys(Falhas)
     if (variavFalhas.length > 0) {
-        console.log("Falhas presente: ", Falhas)
         variavFalhas.forEach(element => {
             if  ((Variaveis[element]["valor"] !== true) && (Variaveis[element]["cor"] !== corFalha)) {
                 console.log("Excluindo falha da lista: ", element)
@@ -58,18 +58,6 @@ function verificaFalhas() {
 }
 
 setInterval(verificaFalhas, 60000)
-
-
-let teste = false
-if (teste === false) {
-
-    Variaveis["falha_TmpPnlGer"]["valor"] = true
-    Falhas["falha_TmpPnlGer"] = "Falha de temperatura no painel geral do Ecoat!"
-    teste = true
-
-}
-
-
 
 
 // Atualiza cor de status para a variável

@@ -1,19 +1,16 @@
 
-var enviaEmail = require('../../services/enviaEmail');
-var pjson = require('../../../package.json');
 const ads = require('ads-client');
-var main = require('../../../main')
-var bd = require('../../BD/server')
-const contatos = require('../../../contatos');
+const main = require('../../../main')
+const storage = require('../../services/storage')
 
+var flagFalha = false
 
-// Inicializa variáveis para tentativas de conexão
-var envioEmail = false;
-var tentatConex = 0;
-var statusConnect = false;
 
 
 console.log("INICIANDO PLC DO ECOAT")
+
+var statusConnect = false;
+module.exports.statusPLCecoat = statusConnect
 
 /*
 // Enviar e-mail ao inicializar servidor
@@ -34,8 +31,6 @@ const clientPLCecoat = new ads.Client({
 });
 
 
-
-
 /* #Teste!
 
 // Opção para conexão sem o ADS da Beckhoff
@@ -54,61 +49,45 @@ const clientPLCecoat = new ads.Client({
 */
 
 
-var recon = '' // Variavel para Timeout de reconexão
-var iVerificaStatus = '' // Variavel para Interval de verifica-status
+iVerifPLC = setInterval(verificaPLC, 2000);
 
-// Reconecta CLP após o período determinado
-function reconectar(tempo) {
-    //console.log("Iniciando contagem de tempo para reconectar o PLC do E-coat em ", tempo / 1000, "segundos")
-    recon = setTimeout(conectarEcoat, tempo);
-}
+async function verificaPLC() {
 
-
-// Inicia conexão com o CLP
-conectarEcoat();
-
-
-
-// MONITOR DO STATUS DO CLP
-async function verificaStatus() {
-    var resposta = '';
     try {
-        resposta = await clientPLCecoat.readPlcRuntimeState()
-        console.log("resposta do status do CLP do Ecoat ", resposta)
-        statusConnect = true;
+        let respStatus = await clientPLCecoat.readPlcRuntimeState();
+
+        if (respStatus.adsState !== 5) {
+
+            flagFalha = false;
+            statusConnect = false
+            let msgErro = 'CLP do E-coat desconectado: ' + respStatus
+            console.log(msgErro)
+            flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
+            flagFalha = true;
+            clientPLCecoat.disconnect();
+
+        } else {
+
+            console.log("CLP do ECOAT conectado: ", respStatus)
+            statusConnect = true
+
+        }
+
     } catch (err) {
-        let msgErro = "Falha ao verificar o status do PLC do Ecoat: "
-        statusConnect = false;
-        bd.insertBD("log", msgErro, err)
-        console.log(msgErro, err)
-        reconectar(30000)
-        clearInterval(iVerificaStatus)
-        return
-    }
 
-}
-
-async function desconectar() {
-    try {
-        clientPLCecoat.disconnect()
         statusConnect = false
-    } catch (err) {
-        let msgErro = "Falha ao desconectar o PLC do Ecoat: " + err
-        bd.insertBD("log", msgErro)
+        let msgErro = 'Falha ao tentar conectar ao PLC do E-coat: ' + err
         console.log(msgErro)
+        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
+        flagFalha = true;
+
+        conectar();
+
     }
-}
-module.exports.desconectar = desconectar
 
-
-
-function criaInterval() {
-    iVerificaStatus = setInterval(verificaStatus, 10000); // Inicia verificação de status periódica
 }
 
-
-// Conexão com o CLP
-async function conectarEcoat() {
+function conectar() {
 
     try {
 
@@ -119,22 +98,15 @@ async function conectarEcoat() {
         })
         */
 
+
         clientPLCecoat.connect()
             .then((resp) => {
-                // Inicia instância para monitorar as variáveis do processo e atualizar os valores 
-                console.log("CONEXÃO COM O CLP DO E-COAT REALIZADA COM SUCESSO!!! ")
+
                 statusConnect = true;
-                clearTimeout(recon)
-                
-                criaInterval();
 
-                console.log(resp)
-
-                tentatConex = 0; // reinicia tentativa de conexão
-                envioEmail = false; // reinicia flag de envio de e-mail
-
-
-
+                //clearInterval(iTentativaRec)
+                // Inicia instância para monitorar as variáveis do processo e atualizar os valores 
+                console.log("CONEXÃO COM O CLP DO E-COAT REALIZADA COM SUCESSO!!! ", resp)
 
                 // LEITURA DAS VARIAVEIS DO CLP (CRIAR SUBSCRIÇÃO DAS VARIÁVEIS)
                 // Varre variáveis para aquisção com o CLP
@@ -144,93 +116,72 @@ async function conectarEcoat() {
                         var Variaveis = val
                         //console.log("INICIANDO FOR PARA VARIAVEIS DO CLP: "+JSON.stringify(Variaveis))
                         for (const Variavel of Object.entries(Variaveis)) {
+
                             if (Variavel[1].modulo === "PLCecoat") {
-                                //console.log("Modulo: " + JSON.stringify(Variavel[1]))
-                                iniciarVariaveis(Variavel)
+
+                                clientPLCecoat.subscribe(Variavel[1].endereco, (data, sub) => {
+                                    //Note: The sub parameter is the same as returned by clientPLCecoat.subcribe()
+                                    try {
+                                        main.tratDados(Variavel, data.value);
+                                    } catch (err) {
+                                        main.tratDados(Variavel, 0)
+                                        let msgErro = "FALHA NO TRATAMENTO DA VARIÁVEL DO CLP do Ecoat: " + " - Erro: " + err
+                                        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
+                                        flagFalha = true;
+                                        console.log(msgErro)
+                                    }
+
+                                }, 5000)
+                                    .catch(err => {
+                                        let msgErro = 'Falha ao ler variável do CLP do Ecoat: ' + Variavel[1].endereco + err
+                                        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
+                                        flagFalha = true;
+
+                                    })
+
                             }
                         }
-                        //console.log("LISTA DE VARIAVEIS: " + JSON.stringify(val))
-                        return val
                     }
                 )
 
-                // Cria subscrição das variáveis para atualização pelo CLP
-                function iniciarVariaveis(iVariavel) {
-
-                    // eslint-disable-next-line no-unused-vars
-                    let subscription = clientPLCecoat.subscribe(iVariavel[1].endereco, (data, sub) => {
-                        let tVariavel = iVariavel
-                        //console.log("VARIAVEL RECEBIDA: " + JSON.stringify(iVariavel))
-                        //Note: The sub parameter is the same as returned by clientPLCecoat.subcribe()
-                        //console.log(`${data.timeStamp}: Value OF ${tVariavel[1].endereco} changed to ${data.value}`);
-                      
-                        try {
-                            main.tratDados(tVariavel, data.value);
-                        } catch (err) {
-                            main.tratDados(tVariavel, 0)
-                            let msgErro = "FALHA NO TRATAMENTO DA VARIÁVEL DO CLP do Ecoat: " + " - Erro: " + err
-                            bd.insertBD("log", msgErro)
-                            console.log(msgErro)
-                        }
-
-                        //console.log("VARIAVEL INSTANCIADA: " + JSON.stringify(tVariavel))
-                    }, 5000)
-                        .catch(err => {
-                            let msgErro = 'Falha ao ler variável do CLP do Ecoat: ' + iVariavel[1].endereco + err
-                            bd.insertBD("log", msgErro)
-                            enviaEmail( // Chama função e envia e-mail
-                                "Leitura de Variáveis",
-                                msgErro,
-                                contatos.administrador.nome,
-                                contatos.administrador.email
-                            );
-                            console.log(msgErro)
-                            return
-                        })
-                }
             })
 
 
-            .catch((erro) => {
-                console.log("Falha ao conectar ao CLP do Ecoat" + erro)
-                
-                if (statusConnect === true) {
-                    desconectar();
-                }
+            .catch((err) => {
+                let msgErro = 'Falha ao conectar ao CLP do Ecoat' + err
+                storage.setLS("log", msgErro)
+                flagFalha = true;
 
-                //clientPLCecoat.disconnect();
-                console.log(" Iniciar nova tentativa de conexão em 15 segundos... ", tentatConex)
-                reconectar(15000)
-                tentatConex++;
-
-                if (envioEmail === false && tentatConex > 1100) {
-                    let msgErro = "Excedido tentativas de conexão com o CLP do E-coat: " + " - Erro: " + err
-                    bd.insertBD("log", msgErro)
-                    console.log(msgErro)
-                    try {
-                        enviaEmail( // Chama função e envia e-mail
-                            "Falha de conexão CLP Ecoat", // Assunto do e-mail
-                            msgErro,
-                            contatos.administrador.nome,
-                            contatos.administrador.email
-                        );
-                        envioEmail = true;
-
-                    } catch (err) {
-                        let msgErro = "Falha ao enviar e-mail de alerta de tentativas de conexão com o CLP do E-coat: " + " - Erro: " + err
-                        bd.insertBD("log", msgErro)
-                        console.log(msgErro)
-                    }
-                }
-                return
             })
     } catch (err) {
         let msgErro = "FALHA AO CONECTAR AO CLP DO E-COAT: " + err
-        bd.insertBD("log", msgErro)
-        console.log(msgErro)
+        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
+        flagFalha = true;
     }
+
 }
+conectar();
 
 
-
-module.exports
+/*
+typedef enum nAdsState {
+  ADSSTATE_INVALID      = 0,
+  ADSSTATE_IDLE         = 1,
+  ADSSTATE_RESET        = 2,
+  ADSSTATE_INIT         = 3,
+  ADSSTATE_START        = 4,
+  ADSSTATE_RUN          = 5,
+  ADSSTATE_STOP         = 6,
+  ADSSTATE_SAVECFG      = 7,
+  ADSSTATE_LOADCFG      = 8,
+  ADSSTATE_POWERFAILURE = 9,
+  ADSSTATE_POWERGOOD    = 10,
+  ADSSTATE_ERROR        = 11,
+  ADSSTATE_SHUTDOWN     = 12,
+  ADSSTATE_SUSPEND      = 13,
+  ADSSTATE_RESUME       = 14,
+  ADSSTATE_CONFIG       = 15,   // system is in config mode
+  ADSSTATE_RECONFIG     = 16,   // system should restart in config mode
+  ADSSTATE_MAXSTATES
+} ADSSTATE;
+*/
