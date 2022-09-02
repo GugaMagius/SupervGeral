@@ -1,34 +1,7 @@
 console.log("INICIANDO BD")
-
-
-/* teste!
 var sql = require("mssql");
-var config = {
-    user: 'gustavo',
-    password: 'magius@2021',
-    server: 'MGU-SERVER02',
-    database: 'SUPERVISORIO',
-    "options": {
-        "encrypt": true,
-        "enableArithAbort": true
-    }
-}
 
-*/
-
-var sql = require("mssql");
-var config = {
-    user: 'sa',
-    password: 'magius',
-    server: 'localhost',
-    database: 'TesteDB',
-    "options": {
-        "encrypt": true,
-        "enableArithAbort": true
-    },
-}; // config for your database
-
-
+const config = require('../../configBD').config // Configurações de acesso ao Banco de Dados
 
 function insertBD(tabela, valor, param1, param2) {
     //console.log("valores a serem inseridos na tabela: ", tabela, "Valor: ", valor, "Parametro1: ", param1, "Parametro2: ", param2)

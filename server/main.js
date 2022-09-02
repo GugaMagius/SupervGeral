@@ -17,6 +17,8 @@ const { json } = require('express');
 var Falhas = {}; // Lista de falhas
 
 
+// função para listar variáveis e seus status para outros módulos
+
 function listaAtualizada() {
     //console.log("iniciando PROMISE para enviar Variaveis", Variaveis)
     return new Promise(
@@ -29,11 +31,34 @@ function listaAtualizada() {
 module.exports.listaAtualizada = listaAtualizada
 
 
-
+// função para listar falhas para outros módulos
 function listaFalhas() {
     return Falhas
 }
 module.exports.listaFalhas = listaFalhas
+
+// função para verificar situação das falhas e atualizar clientes
+function verificaFalhas() {
+    if (Falhas.length > 0) {
+        console.log("Falhas presente: ", Falhas)
+        Object.keys(Falhas).forEach(element => {
+            if  ((Variaveis[element]["valor"] !== true) && (Variaveis[element]["cor"] !== corFalha)) {
+                console.log("Excluindo falha da lista: ", element)
+                
+                delete Falhas[element]; // excluí falha da lista
+
+                socketFl.atualizaFalhas(Falhas)
+
+            }
+            
+        });
+    }
+
+}
+
+setInterval(verificaFalhas, 60000)
+
+
 
 
 // Atualiza cor de status para a variável
@@ -395,7 +420,7 @@ function tratDados(Variavel, valor) {
 
 
         prAtualizaVariavel(Variavel[0], valor).then(
-            function (res) {
+            function () {
                 var StatusConexao = socketFl.verifConexao()
 
                 // Verifica se precisa enviar mensagem (Telefone, e-mail ou SMS) e atualiza também a lista de falhas presente
@@ -419,25 +444,26 @@ function tratDados(Variavel, valor) {
                                 socketFl.atualizaFalhas(Falhas)
                             }
 
-                        } else
+                        }
 
-                            if (((valor !== true) && (Variavel[1].cor !== corFalha))) {
+                    } else if (((valor !== true) && (Variavel[1].cor !== corFalha))) {
 
-                                Variaveis[Variavel[0]]["flagAviso"] = false // reinicia informação de mensagem enviada
+                        Variaveis[Variavel[0]]["flagAviso"] = false // reinicia informação de mensagem enviada
 
-                                delete Falhas[Variavel[0]]; // excluí falha da lista
+                        delete Falhas[Variavel[0]]; // excluí falha da lista
 
-                                if (StatusConexao === true) {
-                                    console.log("ATUALIZADO SOCKET PARA RETIRAR A FALHA", Falhas)
-                                    socketFl.atualizaFalhas(Falhas)
-                                }
-                            }
-
+                        if (StatusConexao === true) {
+                            console.log("ATUALIZADO SOCKET PARA RETIRAR A FALHA", Falhas)
+                            socketFl.atualizaFalhas(Falhas)
+                        }
                     }
 
 
                 }
+
+
             }
+
         )
 
     } catch (err) {

@@ -25,6 +25,7 @@ try {
             text: "Atenção " + responsavel + "! " + mensagem
         };
 
+        /* #Teste
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
@@ -32,6 +33,7 @@ try {
                 console.log('Email enviado: ' + info.response);
             }
         });
+        */
 
     }
 

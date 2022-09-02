@@ -189,7 +189,7 @@ export default {
     const items = ref([
       {
         label: "Mosaico",
-        to: "/mosaico",
+        to: "/",
       },
       {
         label: "Relatorios",

@@ -37,7 +37,7 @@ import ProgressBar from 'primevue/progressbar';
 
 const SocketInstance  = {
     debug: true,
-    //connection: SocketIO('http://desenvolvimento:3004') //('http://192.168.22.188:3004')   // teste! ('http://10.69.0.6:3004')  //('http://10.41.1.180:3004') //colocar IP do servidor se o viewer não rodar no mesmo pc
+    //connection: SocketIO('http://desenvolvimento:3004') //#Teste ('http://192.168.22.188:3004')   // teste! ('http://10.69.0.6:3004')  //('http://10.41.1.180:3004') //colocar IP do servidor se o viewer não rodar no mesmo pc
     connection: SocketIO('http://10.41.0.243:3004')
   }
 

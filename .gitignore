@@ -1,9 +1,11 @@
 server/node_modules/
 server/.vscode/
+server/*.zip
+server/configBD.js
 viewer/node_modules/
 viewer/.vscode
 viewer/dist/
 *.vscode
+supervisorio.exe
 server.rar
 viewer.rar
-

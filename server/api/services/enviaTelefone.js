@@ -17,6 +17,7 @@ let enviaTelefone = async function (processo, mensagem, responsavel, telefone) {
         //const newoptions = JSON.stringify(options, null, 4)
         //console.log(options)
 
+        /* #Teste
         await client.tts.enviar(telefone, "Atenção " + responsavel + "! " + mensagem, options)
             .then(() => {
                 console.log(`O ${responsavel} já foi avisado`)
@@ -35,6 +36,7 @@ let enviaTelefone = async function (processo, mensagem, responsavel, telefone) {
                 );
 
             });
+            */
     } catch (err) {
         console.log("FALHA AO ENVIAR ALERTA POR TELEFONE: ", err)
     }
