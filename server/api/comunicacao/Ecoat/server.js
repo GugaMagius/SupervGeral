@@ -2,6 +2,7 @@
 const ads = require('ads-client');
 const main = require('../../../main')
 const storage = require('../../services/storage')
+const socketIO = require('../../socket/server')
 
 var flagFalha = false
 
@@ -9,8 +10,6 @@ var flagFalha = false
 
 console.log("INICIANDO PLC DO ECOAT")
 
-var statusConnect = false;
-module.exports.statusPLCecoat = statusConnect
 
 /*
 // Enviar e-mail ao inicializar servidor
@@ -48,38 +47,41 @@ const clientPLCecoat = new ads.Client({
 
 */
 
+function falhaConexao(msg) {
+
+    socketIO.statusConnect.ecoat = false
+    console.log(msg)
+    flagFalha === false ? storage.setLS("log", msg) : flagFalha
+    flagFalha = true;
+
+}
+
 
 iVerifPLC = setInterval(verificaPLC, 2000);
 
 async function verificaPLC() {
 
     try {
+
         let respStatus = await clientPLCecoat.readPlcRuntimeState();
 
         if (respStatus.adsState !== 5) {
 
-            flagFalha = false;
-            statusConnect = false
             let msgErro = 'CLP do E-coat desconectado: ' + respStatus
-            console.log(msgErro)
-            flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
-            flagFalha = true;
+            falhaConexao(msgErro)
             clientPLCecoat.disconnect();
 
         } else {
 
             console.log("CLP do ECOAT conectado: ", respStatus)
-            statusConnect = true
+            socketIO.statusConnect.ecoat = true
 
         }
 
     } catch (err) {
 
-        statusConnect = false
         let msgErro = 'Falha ao tentar conectar ao PLC do E-coat: ' + err
-        console.log(msgErro)
-        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
-        flagFalha = true;
+        falhaConexao(msgErro)
 
         conectar();
 
@@ -102,7 +104,7 @@ function conectar() {
         clientPLCecoat.connect()
             .then((resp) => {
 
-                statusConnect = true;
+                socketIO.statusConnect.ecoat = true;
 
                 //clearInterval(iTentativaRec)
                 // Inicia instância para monitorar as variáveis do processo e atualizar os valores 
@@ -126,16 +128,13 @@ function conectar() {
                                     } catch (err) {
                                         main.tratDados(Variavel, 0)
                                         let msgErro = "FALHA NO TRATAMENTO DA VARIÁVEL DO CLP do Ecoat: " + " - Erro: " + err
-                                        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
-                                        flagFalha = true;
-                                        console.log(msgErro)
+                                        falhaConexao(msgErro)
                                     }
 
                                 }, 5000)
                                     .catch(err => {
                                         let msgErro = 'Falha ao ler variável do CLP do Ecoat: ' + Variavel[1].endereco + err
-                                        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
-                                        flagFalha = true;
+                                        falhaConexao(msgErro)
 
                                     })
 
@@ -149,14 +148,12 @@ function conectar() {
 
             .catch((err) => {
                 let msgErro = 'Falha ao conectar ao CLP do Ecoat' + err
-                storage.setLS("log", msgErro)
-                flagFalha = true;
+                falhaConexao(msgErro)
 
             })
     } catch (err) {
         let msgErro = "FALHA AO CONECTAR AO CLP DO E-COAT: " + err
-        flagFalha === false ? storage.setLS("log", msgErro) : flagFalha
-        flagFalha = true;
+        falhaConexao(msgErro)
     }
 
 }

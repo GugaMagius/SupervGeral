@@ -11,6 +11,8 @@ app.use(cors());
 const http = require('http').createServer(app)
 const main = require('../../main')
 const BD = require('../BD/server')
+var statusConnect = {ecoat: false, pinturapo: false, auditorio: false}
+module.exports.statusConnect = statusConnect
 
 var socketConectado = false; // Status de conexão do socket
 
@@ -58,7 +60,7 @@ io.sockets.on('disconnect', function () {
 
 // Atualiza Watchdog a cada ciclo configurado
 setInterval(function () {
-    io.emit('watchdog')
+    io.emit('watchdog', statusConnect)
 }, 3000)
 
 
