@@ -9,25 +9,25 @@
           <div class="p-grid">
             <!-- Queimador 1 -->
             <div class="p-col-3">
-              <div class="box campo" :class="{ stsFalha: falhaQuem1PP }">
+              <div class="box campo" :class="{ stsFalha: Variaveis.falhaQuem1PP.valor }">
                 Queimador 1
               </div>
             </div>
             <!-- Queimador 2 -->
             <div class="p-col-3">
-              <div class="box campo" :class="{ stsFalha: falhaQuem2PP }">
+              <div class="box campo" :class="{ stsFalha: Variaveis.falhaQuem2PP.valor }">
                 Queimador 2
               </div>
             </div>
             <!-- Queimador 3 -->
             <div class="p-col-3">
-              <div class="box campo" :class="{ stsFalha: falhaQuem3PP }">
+              <div class="box campo" :class="{ stsFalha: Variaveis.falhaQuem3PP.valor }">
                 Queimador 3
               </div>
             </div>
             <!-- Queimador 4 -->
             <div class="p-col-3">
-              <div class="box campo" :class="{ stsFalha: falhaQuem4PP }">
+              <div class="box campo" :class="{ stsFalha: Variaveis.falhaQuem4PP.valor }">
                 Queimador 4
               </div>
             </div>
@@ -47,10 +47,10 @@
               <div
                 class="box"
                 v-bind:class="[
-                  falhaTemp1PP ? 'dispTempAtualFalha' : 'dispTempAtual',
+                  Variaveis.falhaTemp1PP.valor ? 'dispTempAtualFalha' : 'dispTempAtual',
                 ]"
               >
-                <p>{{ temperQueim1PP }}ºC</p>
+                <p>{{ Variaveis.temperQueim1PP.valor }}ºC</p>
               </div>
             </div>
             <!-- Queimador 2 -->
@@ -58,10 +58,10 @@
               <div
                 class="box"
                 v-bind:class="[
-                  falhaTemp2PP ? 'dispTempAtualFalha' : 'dispTempAtual',
+                  Variaveis.falhaTemp2PP.valor ? 'dispTempAtualFalha' : 'dispTempAtual',
                 ]"
               >
-                <p>{{ temperQueim2PP }}ºC</p>
+                <p>{{ Variaveis.temperQueim2PP.valor }}ºC</p>
               </div>
             </div>
             <!-- Queimador 3 -->
@@ -69,10 +69,10 @@
               <div
                 class="box"
                 v-bind:class="[
-                  falhaTemp3PP ? 'dispTempAtualFalha' : 'dispTempAtual',
+                  Variaveis.falhaTemp3PP.valor ? 'dispTempAtualFalha' : 'dispTempAtual',
                 ]"
               >
-                <p>{{ temperQueim3PP }}ºC</p>
+                <p>{{ Variaveis.temperQueim3PP.valor }}ºC</p>
               </div>
             </div>
             <!-- Queimador 4 -->
@@ -80,10 +80,10 @@
               <div
                 class="box"
                 v-bind:class="[
-                  falhaTemp4PP ? 'dispTempAtualFalha' : 'dispTempAtual',
+                  Variaveis.falhaTemp4PP.valor ? 'dispTempAtualFalha' : 'dispTempAtual',
                 ]"
               >
-                <p>{{ temperQueim4PP }}ºC</p>
+                <p>{{ Variaveis.temperQueim4PP.valor }}ºC</p>
               </div>
             </div>
           </div>
@@ -100,25 +100,25 @@
             <!-- Queimador 1 -->
             <div class="p-col-3">
               <div class="box dispTempSP">
-                <p>{{ spQueim1PP }} ºC</p>
+                <p>{{ Variaveis.spQueim1PP.valor }} ºC</p>
               </div>
             </div>
             <!-- Queimador 2 -->
             <div class="p-col-3">
               <div class="box dispTempSP">
-                <p>{{ spQueim2PP }} ºC</p>
+                <p>{{ Variaveis.spQueim2PP.valor }} ºC</p>
               </div>
             </div>
             <!-- Queimador 3 -->
             <div class="p-col-3">
               <div class="box dispTempSP">
-                <p>{{ spQueim3PP }} ºC</p>
+                <p>{{ Variaveis.spQueim3PP.valor }} ºC</p>
               </div>
             </div>
             <!-- Queimador 4 -->
             <div class="p-col-3">
               <div class="box dispTempSP">
-                <p>{{ spQueim4PP }} ºC</p>
+                <p>{{ Variaveis.spQueim4PP.valor }} ºC</p>
               </div>
             </div>
           </div>
@@ -140,15 +140,15 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitVent1PP,
-                      stsDesligado: !leitVent1PP,
+                      stsLigado: Variaveis.leitVent1PP.valor,
+                      stsDesligado: !Variaveis.leitVent1PP.valor,
                     }"
                   ></div>
                 </div>
                 <div class="p-col-9">
                   <div
                     class="box dispVeloc"
-                    :class="{ stsFalha: falhaVent1PP }"
+                    :class="{ stsFalha: Variaveis.falhaVent1PP.valor }"
                   >
                     <p>3450rpm</p>
                   </div>
@@ -163,15 +163,15 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitVent2PP,
-                      stsDesligado: !leitVent2PP,
+                      stsLigado: Variaveis.leitVent2PP.valor,
+                      stsDesligado: !Variaveis.leitVent2PP.valor,
                     }"
                   ></div>
                 </div>
                 <div class="p-col-9">
                   <div
                     class="box dispVeloc"
-                    :class="{ stsFalha: falhaVent2PP }"
+                    :class="{ stsFalha: Variaveis.falhaVent2PP.valor }"
                   >
                     <p>3450rpm</p>
                   </div>
@@ -187,15 +187,15 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitVent3PP,
-                      stsDesligado: !leitVent3PP,
+                      stsLigado: Variaveis.leitVent3PP.valor,
+                      stsDesligado: !Variaveis.leitVent3PP.valor,
                     }"
                   ></div>
                 </div>
                 <div class="p-col-9">
                   <div
                     class="box dispVeloc"
-                    :class="{ stsFalha: falhaVent3PP }"
+                    :class="{ stsFalha: Variaveis.falhaVent3PP.valor }"
                   >
                     <p>3450rpm</p>
                   </div>
@@ -210,15 +210,15 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitVent4PP,
-                      stsDesligado: !leitVent4PP,
+                      stsLigado: Variaveis.leitVent4PP.valor,
+                      stsDesligado: !Variaveis.leitVent4PP.valor,
                     }"
                   ></div>
                 </div>
                 <div class="p-col-9">
                   <div
                     class="box dispVeloc"
-                    :class="{ stsFalha: falhaVent4PP }"
+                    :class="{ stsFalha: Variaveis.falhaVent4PP.valor }"
                   >
                     <p>3450rpm</p>
                   </div>
@@ -243,8 +243,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim1PPchmAt,
-                      stsDesligado: !Queim1PPchmAt,
+                      stsLigado: Variaveis.Queim1PPchmAt.valor,
+                      stsDesligado: !Variaveis.Queim1PPchmAt.valor,
                     }"
                   ></div>
                 </div>
@@ -252,8 +252,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim1PPchmBx,
-                      stsDesligado: !Queim1PPchmBx,
+                      stsLigado: Variaveis.Queim1PPchmBx.valor,
+                      stsDesligado: !Variaveis.Queim1PPchmBx.valor,
                     }"
                   ></div>
                 </div>
@@ -261,8 +261,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitQuem1PP,
-                      stsDesligado: !leitQuem1PP,
+                      stsLigado: Variaveis.leitQuem1PP.valor,
+                      stsDesligado: !Variaveis.leitQuem1PP.valor,
                     }"
                   ></div>
                 </div>
@@ -275,8 +275,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim2PPchmAt,
-                      stsDesligado: !Queim2PPchmAt,
+                      stsLigado: Variaveis.Queim2PPchmAt.valor,
+                      stsDesligado: !Variaveis.Queim2PPchmAt.valor,
                     }"
                   ></div>
                 </div>
@@ -284,8 +284,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim2PPchmBx,
-                      stsDesligado: !Queim2PPchmBx,
+                      stsLigado: Variaveis.Queim2PPchmBx.valor,
+                      stsDesligado: !Variaveis.Queim2PPchmBx.valor,
                     }"
                   ></div>
                 </div>
@@ -293,8 +293,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitQuem2PP,
-                      stsDesligado: !leitQuem2PP,
+                      stsLigado: Variaveis.leitQuem2PP.valor,
+                      stsDesligado: !Variaveis.leitQuem2PP.valor,
                     }"
                   ></div>
                 </div>
@@ -308,8 +308,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim3PPchmAt,
-                      stsDesligado: !Queim3PPchmAt,
+                      stsLigado: Variaveis.Queim3PPchmAt.valor,
+                      stsDesligado: !Variaveis.Queim3PPchmAt.valor,
                     }"
                   ></div>
                 </div>
@@ -317,8 +317,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim3PPchmBx,
-                      stsDesligado: !Queim3PPchmBx,
+                      stsLigado: Variaveis.Queim3PPchmBx.valor,
+                      stsDesligado: !Variaveis.Queim3PPchmBx.valor,
                     }"
                   ></div>
                 </div>
@@ -326,8 +326,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitQuem3PP,
-                      stsDesligado: !leitQuem3PP,
+                      stsLigado: Variaveis.leitQuem3PP.valor,
+                      stsDesligado: !Variaveis.leitQuem3PP.valor,
                     }"
                   ></div>
                 </div>
@@ -340,8 +340,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim4PPchmAt,
-                      stsDesligado: !Queim4PPchmAt,
+                      stsLigado: Variaveis.Queim4PPchmAt.valor,
+                      stsDesligado: !Variaveis.Queim4PPchmAt.valor,
                     }"
                   ></div>
                 </div>
@@ -349,8 +349,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: Queim4PPchmBx,
-                      stsDesligado: !Queim4PPchmBx,
+                      stsLigado: Variaveis.Queim4PPchmBx.valor,
+                      stsDesligado: !Variaveis.Queim4PPchmBx.valor,
                     }"
                   ></div>
                 </div>
@@ -358,8 +358,8 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: leitQuem4PP,
-                      stsDesligado: !leitQuem4PP,
+                      stsLigado: Variaveis.leitQuem4PP.valor,
+                      stsDesligado: !Variaveis.leitQuem4PP.valor,
                     }"
                   ></div>
                 </div>
@@ -399,8 +399,8 @@
               <div
                 class="box"
                 :class="{
-                  stsLigado: leitCortArPP,
-                  stsDesligado: !leitCortArPP,
+                  stsLigado: Variaveis.leitCortArPP.valor,
+                  stsDesligado: !Variaveis.leitCortArPP.valor,
                 }"
               ></div>
             </div>
@@ -413,15 +413,15 @@
                   <div
                     class="box"
                     :class="{
-                      stsLigado: stsMonoviaPP,
-                      stsFalha: !stsMonoviaPP,
+                      stsLigado: Variaveis.stsMonoviaPP.valor,
+                      stsFalha: !Variaveis.stsMonoviaPP.valor,
                     }"
                   ></div>
                 </div>
                 <div class="p-col-10">
                   <div class="box"
-                  v-bind:class="[ stsVelMonovPP ? 'stsFalha' : 'dispVeloc', ]">
-                    Velocidade atual: {{ velMonoviaPP }}m/min
+                  v-bind:class="[ Variaveis.stsVelMonovPP.valor ? 'stsFalha' : 'dispVeloc', ]">
+                    Velocidade atual: {{ Variaveis.velMonoviaPP.valor }}m/min
                   </div>
                 </div>
               </div>
@@ -437,9 +437,9 @@
         <div class="p-col-11">
           <div class="box">
             <Fila
-              v-bind:aFilaPP="aFilaPP"
-              v-bind:aPosRecPP="aPosRecPP"
-              v-bind:recEstufaPP="recEstufaPP"
+              v-bind:aFilaPP="Variaveis.aFilaPP.valor"
+              v-bind:aPosRecPP="Variaveis.aPosRecPP.valor"
+              v-bind:recEstufaPP="Variaveis.recEstufaPP.valor"
               ref="compFila"
             />
           </div>
@@ -471,49 +471,7 @@ export default {
   },
   props: {
     // Prop declarada no Router-view para leitura de uma variável
-    aFilaPP: Array,
-    aPosRecPP: Array,
-    recEstufaPP: Number,
-    velMonoviaPP: Number,
-    stsMonoviaPP: Boolean,
-    stsVelMonovPP: Boolean,
-    temperQueim1PP: Number,
-    temperQueim2PP: Number,
-    temperQueim3PP: Number,
-    temperQueim4PP: Number,
-    spQueim1PP: Number,
-    spQueim2PP: Number,
-    spQueim3PP: Number,
-    spQueim4PP: Number,
-    leitVent1PP: Boolean,
-    leitVent2PP: Boolean,
-    leitVent3PP: Boolean,
-    leitVent4PP: Boolean,
-    leitQuem1PP: Boolean,
-    leitQuem2PP: Boolean,
-    leitQuem3PP: Boolean,
-    leitQuem4PP: Boolean,
-    falhaQuem1PP: Boolean,
-    falhaQuem2PP: Boolean,
-    falhaQuem3PP: Boolean,
-    falhaQuem4PP: Boolean,
-    falhaVent1PP: Boolean,
-    falhaVent2PP: Boolean,
-    falhaVent3PP: Boolean,
-    falhaVent4PP: Boolean,
-    leitCortArPP: Boolean,
-    falhaTemp1PP: Boolean,
-    falhaTemp2PP: Boolean,
-    falhaTemp3PP: Boolean,
-    falhaTemp4PP: Boolean,
-    Queim1PPchmBx: Boolean,
-    Queim1PPchmAt: Boolean,
-    Queim2PPchmBx: Boolean,
-    Queim2PPchmAt: Boolean,
-    Queim3PPchmBx: Boolean,
-    Queim3PPchmAt: Boolean,
-    Queim4PPchmBx: Boolean,
-    Queim4PPchmAt: Boolean,
+    Variaveis: Object
   },
 };
 </script>

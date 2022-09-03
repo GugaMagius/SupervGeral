@@ -24,6 +24,10 @@
     </div>
     <div class="RouterView" v-if="dadosRecebidos">
       <router-view
+      :Variaveis="Variaveis"
+      />
+      <!--
+        
         :recEstufaPP="Variaveis.recEstufaPP.valor"
         :aFilaPP="Variaveis.aFilaPP.valor"
         :aPosRecPP="Variaveis.aPosRecPP.valor"
@@ -35,7 +39,7 @@
         :stsMonoviaPL="Variaveis.stsMonoviaPL.valor"
         :stsMonoviaPP="Variaveis.stsMonoviaPP.valor"
         :stsVelMonovPP="Variaveis.stsVelMonovPP.valor"
-        :temperQueim1PP="Variaveis.temperQueim1PP.valor"
+        :temperQueim1PP="Variaveis.temperQueim1PP.valor"falhaQuem1PL
         :temperQueim2PP="Variaveis.temperQueim2PP.valor"
         :temperQueim3PP="Variaveis.temperQueim3PP.valor"
         :temperQueim4PP="Variaveis.temperQueim4PP.valor"
@@ -149,7 +153,7 @@
         :falha_Desg2="Variaveis.falha_Desg2.valor"
         :falha_Fosf="Variaveis.falha_Fosf.valor"
         :falha_Cald="Variaveis.falha_Cald.valor"
-      />
+      -->
     </div>
 
     <div class="Rodape">
@@ -179,7 +183,8 @@ export default {
       msgTela: null,
       Titulo: "",
       socketMessage: null,
-      Variaveis: {}
+      Variaveis: {},
+      statusConnect: {ecoat: false, pinturapo: false, auditorio: false}
     };
   },
 
@@ -266,7 +271,8 @@ export default {
       this.isConnected = false;
     },
 
-    watchdog() {
+    watchdog(statusConnect) {
+      this.statusConnect = statusConnect;
       console.log("MENSAGEM DO WATCHDOG", this.varWD);
       this.isConnected = true;
       clearTimeout(this.varWD);
@@ -274,8 +280,8 @@ export default {
     },
 
     // Fired when the server sends something on the "messageChannel" channel.
-    messageChannel(data) {
-      this.socketMessage = data;
+    messageChannel(msg) {
+      this.socketMessage = msg;
     },
 
     // Atualiza pacote de variáveis do PLC
@@ -293,19 +299,13 @@ export default {
     atualiza(data) {
       const Variavel = data[0];
       const Valor = data[1];
-      /*
-      if (this.Variaveis[Variavel]["casasDec"] !== null) {
-        this.Variaveis[Variavel]["valor"] = Valor.toFixed(
-          this.Variaveis[Variavel]["casasDec"]
-        );
-      } else {
-        */
-      this.Variaveis[Variavel]["valor"] = Valor;
-      //}
+      const Cor = data[2];
 
+      this.Variaveis[Variavel]["valor"] = Valor;
+      
       // atualiza status da cor
       if (this.Variaveis[Variavel]["cor"] != undefined) {
-        this.Variaveis[Variavel]["cor"] = data[2];
+        this.Variaveis[Variavel]["cor"] = Cor;
       }
     },
   },
@@ -319,11 +319,7 @@ export default {
 </script>
 
 <style>
-/*
-.p-knob-value.path {
-  stroke: blue;
-}
-*/
+  
 .logo {
   position: absolute;
   left: 0;

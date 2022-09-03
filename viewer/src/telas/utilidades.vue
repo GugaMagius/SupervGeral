@@ -4,7 +4,7 @@
       <tr>
         <!-- NÍVEL DE ÁGUA PRINCIPAL -->
         <td class="NivelAgua">
-          {{ nivel_Agua }} %
+          {{ Variaveis.nivel_Agua.valor }} %
           <div id="Fdo">
             <div
               id="Bar"
@@ -18,7 +18,7 @@
         </td>
         <!-- NÍVEL DE ÁGUA DO REFEITÓRIO -->
         <td class="NivelAgua">
-          {{ nivel_Ag_Ref }} %
+          {{ Variaveis.nivel_Ag_Ref.valor }} %
           <div id="Fdo">
             <div
               id="Bar"
@@ -34,18 +34,18 @@
           <!-- VAZÃO DE AR-COMPRIMIDO -->
           <div>
             <Knob
-              v-bind:modelValue="vazaoArComp"
+              v-bind:modelValue="Variaveis.vazaoArComp.valor"
               v-bind:size="240"
               :max="1600"
               readonly="true"
               strokeWidth="18"
-              v-bind:valueColor="corVazArComp"
+              v-bind:valueColor="Variaveis.vazaoArComp.cor"
             />
           </div>
         </td>
       </tr>
       <tr>
-        <td v-bind:class="{ Falha: falha_nivel_Agua }">
+        <td v-bind:class="{ Falha: Variaveis.falha_nivel_Agua.valor }">
           Nível Caixa água Estac. <br />
           acima de 20%
         </td>
@@ -73,32 +73,21 @@ export default {
   },
 
   props: {
-    nivel_Agua: Number,
-    nivel_Ag_Ref: Number,
-    falha_nivel_Agua: Boolean,
-    tmp_KTL: Number,
-    corTmp_KTL: String,
-    tmp_Cald: Number,
-    corTmp_Cald: String,
-    corTmp_Fosfato: String,
-    falha_tmp_KTL: Boolean,
-    falha_Cald: Boolean,
-    vazaoArComp: Number,
-    corVazArComp: String,
+    Variaveis: Object
   },
 
   computed: {
     compHeightNivelGr: function () {
-      return this.nivel_Agua + "%";
+      return this.Variaveis.nivel_Agua.valor + "%";
     },
     computedMarginNivelGr: function () {
-      return 100 - this.nivel_Agua + "%";
+      return 100 - this.Variaveis.nivel_Agua.valor + "%";
     },
     compHeightNivelRf: function () {
-      return this.nivel_Ag_Ref + "%";
+      return this.Variaveis.nivel_Ag_Ref.valor + "%";
     },
     computedMarginNivelRf: function () {
-      return 100 - this.nivel_Ag_Ref + "%";
+      return 100 - this.Variaveis.nivel_Ag_Ref.valor + "%";
     },
   },
 };

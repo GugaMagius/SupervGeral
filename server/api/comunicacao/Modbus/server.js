@@ -1,9 +1,7 @@
-
-var enviaEmail = require('../../services/enviaEmail');
 var main = require('../../../main')
 var bd = require('../../BD/server')
-const contatos = require('../../../contatos');
 const EndereçoWise1 = "10.41.1.222"
+const socketIO = require('../../socket/server')
 
 
 // Inicializa variáveis para tentativas de conexão
@@ -13,6 +11,16 @@ var vReconectar = ''; // Variavel para setTimeout para reconectar
 var leitura = ''; // Variavel para setInterval para leitura das variáveis do processo
 var flagConnect = false; // Variavel para sinalizar conexão com o módulo
 
+var flagFalha = false
+
+function falhaConexao(msg) {
+
+    socketIO.statusConnect.auditorio = false
+    console.log(msg)
+    flagFalha === false ? storage.setLS("log", msg) : flagFalha
+    flagFalha = true;
+
+}
 
 
 console.log("INICIANDO Modbus")
@@ -26,13 +34,15 @@ var networkErrors = ["ESOCKETTIMEDOUT", "ETIMEDOUT", "ECONNRESET", "ECONNREFUSED
 
 // CONEXÃO COM O MODULO I/O ADAM WISE
 function conectar(status) {
-    console.log("Status das variáveis: envioEmail=",envioEmail," / tentaConex=",tentatConex," / flagConnect=",flagConnect)
     // open connection to a tcp line 
     try {
         client.connectTCP(EndereçoWise1)
             .then(client.setID(1))
             .then(function () {
-                console.log("Módulo 1 Conectado");
+
+                console.log("Módulo MODBUS 1 Conectado");
+                socketIO.statusConnect.auditorio = true;
+                flagFalha=false;
                 envioEmail=false;
                 flagConnect = true;
                 tentatConex = 0;
@@ -44,27 +54,15 @@ function conectar(status) {
                 if (e.errno) {
                     if (networkErrors.includes(e.errno)) {
                         let msgErro = "FALHA AO CONECTAR AO MÓDULO MODBUS" + e.errno
-                        if (flagConnect === true) {
-                            flagConnect = false;
-                            bd.insertBD("log", msgErro)
-                        }
-                        console.log(msgErro)
+                        falhaConexao(msgErro)
                     }
                 }
                 let msgErro = "FALHA AO CONECTAR AO MÓDULO MODBUS" + e;
-                if (flagConnect === true) {
-                    flagConnect = false;
-                    bd.insertBD("log", msgErro)
-                }
-                console.log(msgErro)
+                falhaConexao(msgErro)
             });
     } catch (err) {
         let msgErro = "FALHA AO CONECTAR AO MÓDULO MODBUS" + err;
-        if (flagConnect === true) {
-            flagConnect = false;
-            bd.insertBD("log", msgErro)
-        }
-        console.log(msgErro)
+        falhaConexao(msgErro)
     }
 
 }
@@ -73,34 +71,7 @@ try {
     conectar()
 } catch (err) {
     let msgErro = "Falha ao conectar ao módulo Adam! tentativa: " + tentatConex + " - Erro número: " + err
-    bd.insertBD("log", msgErro)
-    console.log(msgErro)
-/*
-    if (tentatConex > 60) {
-        try {
-            if (envioEmail === false) {
-                enviaEmail( // Chama função e envia e-mail
-                    "Leitura de Variáveis",
-                    "Falha ao conectar ao Modbus " + ", Tentativa nro.: " + tentatConex + " - Erro: " + e.message,
-                    contatos.administrador.nome,
-                    contatos.administrador.email
-
-                );
-                envioEmail = true;
-                tentatConex = 0;
-            }
-
-        } catch (err) {
-            let msgErro = "FALHA AO ENVIAR E-MAIL: " + err;
-            bd.insertBD("log", msgErro)
-            console.log(msgErro)
-        }
-    } else {
-
-        tentatConex = tentatConex + 1;
-
-    }
-    */
+    falhaConexao(msgErro)
 }
 
 function reconectar() {
@@ -139,7 +110,9 @@ function adquireValor(iVariavel) {
         try {
             client.readHoldingRegisters(0, 7).then(
                 function (valor) {
-                    //console.log("Valor obtido do módulo Modbus da Caixa d`água do refeitório (Wise1): ", valor.data[iVariavel[1]["endereco"]])
+
+                    socketIO.statusConnect.auditorio = true;
+
                     main.tratDados(iVariavel, valor.data[iVariavel[1]["endereco"]]);
 
                 }
@@ -148,27 +121,13 @@ function adquireValor(iVariavel) {
                     clearInterval(leitura)
                     desconectar();
                     let msgErro = "ERRO AO TRATAR VARIÁVEL DO MODBUS: " + e.message
-                    bd.insertBD("log", msgErro)
-                    console.log(msgErro)
+                    falhaConexao(msgErro)
                 })
 
         } catch (err) {
             clearInterval(leitura)
             let msgErro = "ERRO AO FAZER A LEITURA DA VARIÁVEL DO MODBUS: " + e.message
-            bd.insertBD("log", msgErro)
-            console.log(msgErro)
-            /*
-            if (envioEmail === false) {
-                enviaEmail( // Chama função e envia e-mail
-                    "Leitura de Variáveis",
-                    msgErro,
-                    contatos.administrador.nome,
-                    contatos.administrador.email
-                );
-
-                envioEmail = true
-            }
-            */
+            falhaConexao(msgErro)
         }
 
     }
@@ -183,23 +142,21 @@ function iniciarVariaveis() {
         main.listaAtualizada().then(
             function (val) {
                 var Variaveis = val
-                //console.log("INICIANDO FOR PARA VARIAVEIS DO MODBUS: " + JSON.stringify(Variaveis))
+                
                 for (const Variavel of Object.entries(Variaveis)) {
                     if (Variavel[1].modulo === "WISE1") {
-                        //console.log("Modulo: " + JSON.stringify(Variavel[1]))
+                        
                         adquireValor(Variavel)
                     }
-                    //iniciarBD(Variavel)
-                    //console.log("MENSAGEM ENVIADA: "+Variavel[1].mensagem)
+                    
                 }
-                //console.log("LISTA DE VARIAVEIS: " + JSON.stringify(val))
+                
                 return val
             }
         )
     } catch (err) {
         let msgErro = "ERRO AO ATUALIZAR VARIÁVEL DO MODBUS: " + e.message
-        bd.insertBD("log", msgErro)
-        console.log(msgErro)
+        falhaConexao(msgErro)
     }
 
 }

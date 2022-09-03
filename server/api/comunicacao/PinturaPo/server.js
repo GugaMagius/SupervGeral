@@ -1,18 +1,15 @@
 
-var enviaEmail = require('../../services/enviaEmail');
-var pjson = require('../../../package.json');
 const ads = require('ads-client');
-var main = require('../../../main')
-var bd = require('../../BD/server')
-const contatos = require('../../../contatos');
+const main = require('../../../main')
+const storage = require('../../services/storage')
+const socketIO = require('../../socket/server')
+
+var flagFalha = false
 
 
-// Inicializa variáveis para tentativas de conexão
-var envioEmail = false;
-var tentatConex = 0;
 
+console.log("INICIANDO PLC DA PINTURA PÓ")
 
-console.log("INICIANDO PLC PINTURA PÓ")
 
 /*
 // Enviar e-mail ao inicializar servidor
@@ -24,13 +21,13 @@ enviaEmail( // Chama função e envia e-mail
 );
 */
 
+
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
 const clientPLC_PP = new ads.Client({
     targetAmsNetId: '5.88.201.147.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
     targetAdsPort: 851,
     autoReconnect: false
 });
-
 
 
 /* #Teste!
@@ -48,198 +45,131 @@ const clientPLC_PP = new ads.Client({
 
 */
 
+function falhaConexao(msg) {
 
-var recon // Variavel para Timeout de reconexão
-var iVerificaStatus // Variavel para Interval de verifica-status
+    socketIO.statusConnect.pinturapo = false
+    console.log(msg)
+    flagFalha === false ? storage.setLS("log", msg) : flagFalha
+    flagFalha = true;
 
-// Reconecta CLP após o período determinado
-function reconectar(tempo) {
-    //console.log("Iniciando contagem de tempo para reconectar o PLC da pintura pó em ", tempo / 1000, "segundos")
-    recon = setTimeout(conectarPP, tempo);
 }
 
 
-// Inicia conexão com o CLP
-conectarPP();
-//desconectar();
+iVerifPLC = setInterval(verificaPLC, 2000);
 
+async function verificaPLC() {
 
+    try {
 
-async function srvGravaVariavel(variavel, valor) {
-    return new Promise(
-        async function (resolve, reject) {
-            //console.log("iniciando gravação no plc.... ", variavel, valor)
-            try {
-                const res = await clientPLCEstufaPo.writeSymbol(variavel, valor);
-                resolve(res);
-            } catch (err) {
-                let msgErro = "falha ao gravar variável no CLP da pintura pó: " + variavel + " - Erro: " + err
-                bd.insertBD("log", msgErro)
-                console.log(msgErro)
-                reject(err)
-            }
+        let respStatus = await clientPLC_PP.readPlcRuntimeState();
 
+        if (respStatus.adsState !== 5) {
+
+            let msgErro = 'CLP do E-coat desconectado: ' + respStatus
+            falhaConexao(msgErro)
+            clientPLC_PP.disconnect();
+
+        } else {
+
+            console.log("CLP do PP conectado: ", respStatus)
+            socketIO.statusConnect.pinturapo = true
 
         }
-    )
-}
-module.exports.srvGravaVariavel = srvGravaVariavel
 
-
-// MONITOR DO STATUS DO CLP
-async function verificaStatus() {
-    var resposta = '';
-    try {
-        resposta = await clientPLC_PP.readPlcRuntimeState()
-        console.log("resposta do status do CLP da pintura Pó: ", resposta)
     } catch (err) {
-        let msgErro = "falha ao verificar o status do CLP da pintura pó: " + " - Erro: " + err
-        bd.insertBD("log", msgErro)
-        console.log(msgErro)
-        reconectar(30000)
-        clearInterval(iVerificaStatus)
-        return
+
+        let msgErro = 'Falha ao tentar conectar ao PLC do E-coat: ' + err
+        falhaConexao(msgErro)
+
+        conectar();
 
     }
-}
- 
-async function desconectar() {
-    try {
 
-        clientPLC_PP.disconnect().then((resp)=>{
-            console.log("Desconexão realizada com sucesso",resp)
-
-        })
-    } catch (err) {
-        let msgErro = "falha ao desconectar o CLP da pintura pó: " + " - Erro: " + err
-        bd.insertBD("log", msgErro)
-        console.log(msgErro)
-    }
 }
 
-function criaInterval() {
-    iVerificaStatus = setInterval(verificaStatus, 10000); // Inicia verificação de status periódica
-}
-
-
-// Conexão com o CLP
-async function conectarPP() {
+function conectar() {
 
     try {
 
-        /*
-        clientPLC_PP.unsubscribeAll().catch(function (err) {
-            let msgErro = "Falha ao apagar subscrição de variáveis no CLP da Pintura Pó: " + err
-            console.log(msgErro)
-        })
-        */
 
         clientPLC_PP.connect()
             .then((resp) => {
+
+                socketIO.statusConnect.pinturapo = true;
+
+                //clearInterval(iTentativaRec)
                 // Inicia instância para monitorar as variáveis do processo e atualizar os valores 
-                console.log("CONEXÃO COM O CLP PINTURA PÓ REALIZADA COM SUCESSO!!! ")
-                clearTimeout(recon)
-                
-                criaInterval();
-
-
-                console.log("RESPOSTA NA TENTATIVA DE CONEXÃO",resp)
-
-                tentatConex = 0; // reinicia tentativa de conexão
-                envioEmail = false; // reinicia flag de envio de e-mail
-
+                console.log("CONEXÃO COM O CLP DO E-COAT REALIZADA COM SUCESSO!!! ", resp)
 
                 // LEITURA DAS VARIAVEIS DO CLP (CRIAR SUBSCRIÇÃO DAS VARIÁVEIS)
                 // Varre variáveis para aquisção com o CLP
+
                 main.listaAtualizada().then(
                     function (val) {
                         var Variaveis = val
-                        //console.log("INICIANDO FOR PARA VARIAVEIS DO CLP DA PINTURA PÓ: ", Variaveis)
+                        //console.log("INICIANDO FOR PARA VARIAVEIS DO CLP: "+JSON.stringify(Variaveis))
                         for (const Variavel of Object.entries(Variaveis)) {
+
                             if (Variavel[1].modulo === "PLCPinturaPo") {
-                                //console.log("Modulo: " + JSON.stringify(Variavel[1]))
-                                iniciarVariaveis(Variavel)
+
+                                clientPLC_PP.subscribe(Variavel[1].endereco, (data, sub) => {
+                                    //Note: The sub parameter is the same as returned by clientPLC_PP.subcribe()
+                                    try {
+                                        main.tratDados(Variavel, data.value);
+                                    } catch (err) {
+                                        main.tratDados(Variavel, 0)
+                                        let msgErro = "FALHA NO TRATAMENTO DA VARIÁVEL DO CLP da Pintura Pó: " + " - Erro: " + err
+                                        falhaConexao(msgErro)
+                                    }
+
+                                }, 5000)
+                                    .catch(err => {
+                                        let msgErro = 'Falha ao ler variável do CLP da Pintura Pó: ' + Variavel[1].endereco + err
+                                        falhaConexao(msgErro)
+
+                                    })
+
                             }
                         }
-                        //console.log("LISTA DE VARIAVEIS: " + JSON.stringify(val))
-                        return val
                     }
                 )
 
-
-                // Cria subscrição das variáveis para atualização pelo CLP 
-                function iniciarVariaveis(iVariavel) {
-
-                    // eslint-disable-next-line no-unused-vars
-                    let subscription = clientPLC_PP.subscribe(iVariavel[1].endereco, (data, sub) => {
-                        let tVariavel = iVariavel
-                        //console.log("VARIAVEL RECEBIDA: " + JSON.stringify(iVariavel))
-                        //Note: The sub parameter is the same as returned by clientPLC_PP.subcribe()
-                        //console.log(`${data.timeStamp}: Value OF ${tVariavel[1].endereco} changed to ${data.value}`);
-
-                        try {
-                            main.tratDados(tVariavel, data.value);
-                        } catch (err) {
-                            main.tratDados(tVariavel, 0)
-                            let msgErro = "FALHA NO TRATAMENTO DA VARIÁVEL DO CLP da Pintura pó: " + " - Erro: " + err
-                            bd.insertBD("log", msgErro)
-                            console.log(msgErro)
-                        }
-
-                        //console.log("VARIAVEL INSTANCIADA: " + JSON.stringify(tVariavel))
-                    }, 5000)
-                        .catch(err => {
-                            let msgErro = 'Falha ao ler variável do CLP da Pintura pó: ' + iVariavel[1].endereco + err
-                            bd.insertBD("log", msgErro)
-                            enviaEmail( // Chama função e envia e-mail
-                                "Leitura de Variáveis",
-                                msgErro,
-                                contatos.administrador.nome,
-                                contatos.administrador.email
-                            );
-                            console.log(msgErro)
-                            return
-                        })
-                }
             })
 
 
-            .catch((erro) => {
-                console.log("Falha ao conectar ao CLP da pintura Pó" + erro)
+            .catch((err) => {
+                let msgErro = 'Falha ao conectar ao CLP da Pintura pó' + err
+                falhaConexao(msgErro)
 
-                //clientPLC_PP.disconnect();
-                console.log(" Iniciar nova tentativa de conexão em 15 segundos... ", tentatConex)
-                reconectar(15000)
-                tentatConex++;
-
-                if (envioEmail === false && tentatConex > 1100) {
-                    let msgErro = "Excedido tentativas de conexão com o CLP da Pintura pó: " + " - Erro: " + err
-                    bd.insertBD("log", msgErro)
-                    console.log(msgErro)
-                    try {
-                        enviaEmail( // Chama função e envia e-mail
-                            "Falha de conexão com o CLP Pintura Po", // Assunto do e-mail
-                            msgErro,
-                            contatos.administrador.nome,
-                            contatos.administrador.email
-                        );
-                        envioEmail = true;
-
-                    } catch (err) {
-                        let msgErro = "Falha ao enviar e-mail de alerta de tentativas de conexão com o CLP da Pintura pó: " + " - Erro: " + err
-                        bd.insertBD("log", msgErro)
-                        console.log(msgErro)
-                    }
-                }
-                return
             })
     } catch (err) {
-        let msgErro = "FALHA AO CONECTAR AO CLP DA PINTURA PÓ: " + " - Erro: " + err
-        bd.insertBD("log", msgErro)
-        console.log(msgErro)
+        let msgErro = "FALHA AO CONECTAR AO CLP DA PINTURA PÓ: " + err
+        falhaConexao(msgErro)
     }
+
 }
+conectar();
 
 
-
-module.exports
+/*
+typedef enum nAdsState {
+  ADSSTATE_INVALID      = 0,
+  ADSSTATE_IDLE         = 1,
+  ADSSTATE_RESET        = 2,
+  ADSSTATE_INIT         = 3,
+  ADSSTATE_START        = 4,
+  ADSSTATE_RUN          = 5,
+  ADSSTATE_STOP         = 6,
+  ADSSTATE_SAVECFG      = 7,
+  ADSSTATE_LOADCFG      = 8,
+  ADSSTATE_POWERFAILURE = 9,
+  ADSSTATE_POWERGOOD    = 10,
+  ADSSTATE_ERROR        = 11,
+  ADSSTATE_SHUTDOWN     = 12,
+  ADSSTATE_SUSPEND      = 13,
+  ADSSTATE_RESUME       = 14,
+  ADSSTATE_CONFIG       = 15,   // system is in config mode
+  ADSSTATE_RECONFIG     = 16,   // system should restart in config mode
+  ADSSTATE_MAXSTATES
+} ADSSTATE;
+*/

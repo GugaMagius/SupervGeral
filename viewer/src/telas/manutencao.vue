@@ -4,23 +4,11 @@
       <div class="p-grid">
         <!-- TEMPERATURA DA TINTA (KTL) -->
         <div class="p-col-6 box">
-          <Utilidades
-            :nivel_Agua="nivel_Agua"
-            :nivel_Ag_Ref="nivel_Ag_Ref"
-            :falha_nivel_Agua="falha_nivel_Agua"
-          />
+          <Utilidades :Variaveis="Variaveis" />
         </div>
         <!-- TEMPERATURA DA CALDEIRA -->
         <div class="p-col-6 box">
-          <KtlCaldeira
-            :tmp_KTL="tmp_KTL"
-            :corTmp_KTL="corTmp_KTL"
-            :tmp_Cald="tmp_Cald"
-            :corTmp_Cald="corTmp_Cald"
-            :corTmp_Fosfato="corTmp_Fosfato"
-            :falha_tmp_KTL="falha_tmp_KTL"
-            :falha_Cald="falha_Cald"
-          />
+          <KtlCaldeira :Variaveis="Variaveis" />
         </div>
       </div>
     </div>
@@ -45,16 +33,7 @@ export default {
   },
 
   props: {
-    nivel_Agua: Number,
-    nivel_Ag_Ref: Number,
-    falha_nivel_Agua: Boolean,
-    tmp_KTL: Number,
-    corTmp_KTL: String,
-    tmp_Cald: Number,
-    corTmp_Cald: String,
-    corTmp_Fosfato: String,
-    falha_tmp_KTL: Boolean,
-    falha_Cald: Boolean,
+    Variaveis: Object
   },
 };
 </script>
