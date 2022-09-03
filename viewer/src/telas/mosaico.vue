@@ -7,7 +7,7 @@
       <div class="p-col-5">
         <div class="telaReduzida">
           <router-link to="/ecoat">
-            <Ecoat :Variaveis="Variaveis" />
+            <Ecoat :Variaveis="Variaveis" :StatusConnect="StatusConnect" />
           </router-link>
         </div>
       </div>
@@ -17,7 +17,7 @@
       <div class="p-col-5">
         <div class="telaReduzida">
           <router-link to="/utilidades">
-          <Utilidades :Variaveis="Variaveis" />
+          <Utilidades :Variaveis="Variaveis" :StatusConnect="StatusConnect" />
           </router-link>
         </div>
       </div>
@@ -27,7 +27,7 @@
       <div class="p-col-5">
         <div class="telaReduzida">
           <router-link to="/pinturapo">
-          <PinturaPo :Variaveis="Variaveis" />
+          <PinturaPo :Variaveis="Variaveis" :StatusConnect="StatusConnect" />
           </router-link>
         </div>
       </div>
@@ -37,7 +37,7 @@
       <div class="p-col-5">
         <div class="telaReduzida">
           <router-link to="/pinturaliq">
-          <PinturaLiq :Variaveis="Variaveis" />
+          <PinturaLiq :Variaveis="Variaveis" :StatusConnect="StatusConnect"/>
           </router-link>
         </div>
       </div>
@@ -66,7 +66,8 @@ export default {
     PinturaLiq,
   },
   props: {
-    Variaveis: Object
+    Variaveis: Object,
+    StatusConnect: Object
   },
 };
 </script>

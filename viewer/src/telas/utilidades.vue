@@ -4,28 +4,28 @@
       <tr>
         <!-- NÍVEL DE ÁGUA PRINCIPAL -->
         <td class="NivelAgua">
-          {{ Variaveis.nivel_Agua.valor }} %
+          {{ !StatusConnect.ecoat? 0 : Variaveis.nivel_Agua.valor }} %
           <div id="Fdo">
             <div
               id="Bar"
               v-bind:style="{
                 height: compHeightNivelGr,
                 top: computedMarginNivelGr,
-                'background-color': corNv_Agua,
+                'background-color': !StatusConnect.ecoat? 'grey' : corNv_Agua,
               }"
             ></div>
           </div>
         </td>
         <!-- NÍVEL DE ÁGUA DO REFEITÓRIO -->
         <td class="NivelAgua">
-          {{ Variaveis.nivel_Ag_Ref.valor }} %
+          {{ !StatusConnect.auditorio? 0 : Variaveis.nivel_Ag_Ref.valor }} %
           <div id="Fdo">
             <div
               id="Bar"
               v-bind:style="{
                 height: compHeightNivelRf,
                 top: computedMarginNivelRf,
-                'background-color': corNv_Ag_Ref,
+                'background-color': !StatusConnect.auditorio? 'grey' : corNv_Ag_Ref,
               }"
             ></div>
           </div>
@@ -34,28 +34,28 @@
           <!-- VAZÃO DE AR-COMPRIMIDO -->
           <div>
             <Knob
-              v-bind:modelValue="Variaveis.vazaoArComp.valor"
+              v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.vazaoArComp.valor"
               v-bind:size="240"
               :max="1600"
               readonly="true"
               strokeWidth="18"
-              v-bind:valueColor="Variaveis.vazaoArComp.cor"
+              v-bind:valueColor="!StatusConnect.ecoat? 'grey' : Variaveis.vazaoArComp.cor"
             />
           </div>
         </td>
       </tr>
       <tr>
-        <td v-bind:class="{ Falha: Variaveis.falha_nivel_Agua.valor }">
+        <td v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_nivel_Agua.valor }">
           Nível Caixa água Estac. <br />
-          acima de 20%
+          acima de {{Variaveis.min1_Ag_Ref.valor}}%
         </td>
         <td>
           Nível Caixa água Refeitório<br />
-          acima de 25%
+          acima de {{Variaveis.min1_Ag_Ref.valor}} %
         </td>
         <td>
           Vazão de ar-comprimido<br />
-          abaixo de 1500 m3/h
+          abaixo de {{Variaveis.max_VazArComp1.valor}} m3/h
         </td>
       </tr>
     </table>
@@ -73,18 +73,19 @@ export default {
   },
 
   props: {
-    Variaveis: Object
+    Variaveis: Object,
+    StatusConnect: Object
   },
 
   computed: {
     compHeightNivelGr: function () {
-      return this.Variaveis.nivel_Agua.valor + "%";
+      return !this.StatusConnect.ecoat? 0 : this.Variaveis.nivel_Agua.valor + "%";
     },
     computedMarginNivelGr: function () {
       return 100 - this.Variaveis.nivel_Agua.valor + "%";
     },
     compHeightNivelRf: function () {
-      return this.Variaveis.nivel_Ag_Ref.valor + "%";
+      return !this.StatusConnect.auditorio? 0 : this.Variaveis.nivel_Ag_Ref.valor + "%";
     },
     computedMarginNivelRf: function () {
       return 100 - this.Variaveis.nivel_Ag_Ref.valor + "%";

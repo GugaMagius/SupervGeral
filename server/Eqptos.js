@@ -942,6 +942,7 @@ var Variaveis = {
         periodoAq: "30",
         maxBD: 60,
     },
+    
 
     //Nível de água da caixa de água do Refeitório
     min1_Ag_Ref: {

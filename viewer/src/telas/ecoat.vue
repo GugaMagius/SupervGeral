@@ -7,10 +7,10 @@
         <div class="p-grid">
           <!-- Ácido 1 -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.tmp_Acido1.valor" :size="50" readonly="true" strokeWidth="12"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Acido1.valor" :size="50" readonly="true" strokeWidth="12"
               v-bind:valueColor="Variaveis.tmp_Acido1.cor" />
           </div>
-          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_Acido1.valor }">
+          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Acido1.valor }">
             Temperatura do Ácido 1 <br />
             de {{ Variaveis.SP_Acido1.valor - Variaveis.Hfunc_Acido1.valor }} a {{ Variaveis.SP_Acido1.valor +
                 Variaveis.Hfunc_Acido1.valor
@@ -19,10 +19,10 @@
 
           <!-- Ácido 2 -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.tmp_Acido2.valor" :size="50" readonly="true" strokeWidth="12"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Acido2.valor" :size="50" readonly="true" strokeWidth="12"
               v-bind:valueColor="Variaveis.tmp_Acido2.cor" />
           </div>
-          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_Acido2.valor }">
+          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Acido2.valor }">
             Temperatura do Ácido 2 <br />
             de {{ Variaveis.SP_Acido2.valor - Variaveis.Hfunc_Acido2.valor }} a {{ Variaveis.SP_Acido2.valor +
                 Variaveis.Hfunc_Acido2.valor
@@ -31,10 +31,10 @@
 
           <!-- Desengraxante 1 -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.tmp_Deseng1.valor" :size="50" readonly="true" strokeWidth="12"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Deseng1.valor" :size="50" readonly="true" strokeWidth="12"
               v-bind:valueColor="Variaveis.tmp_Deseng1.cor" />
           </div>
-          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_Desg1.valor }">
+          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Desg1.valor }">
             Temperatura do Deseng 1 <br />
             de {{ Variaveis.SP_Deseng1.valor - Variaveis.Hfunc_Deseng1.valor }} a {{ Variaveis.SP_Deseng1.valor +
                 Variaveis.Hfunc_Deseng1.valor
@@ -43,9 +43,9 @@
 
           <!-- Desengraxante 2 -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.tmp_Deseng2.valor" id="Deseng2" :size="50" readonly="true"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Deseng2.valor" id="Deseng2" :size="50" readonly="true"
               strokeWidth="12" v-bind:valueColor="Variaveis.tmp_Deseng2.cor" />
-            <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_Desg2.valor }">
+            <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Desg2.valor }">
               Temperatura do Deseng 2 <br />
               de {{ Variaveis.SP_Deseng2.valor - Variaveis.Hfunc_Deseng2.valor }} a {{ Variaveis.SP_Deseng2.valor +
                   Variaveis.Hfunc_Deseng2.valor
@@ -54,9 +54,9 @@
 
             <!-- Fosfato -->
             <div class="p-col-12">
-              <Knob v-bind:modelValue="Variaveis.tmp_Fosfato.valor" :size="50" readonly="true" strokeWidth="12"
+              <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Fosfato.valor" :size="50" readonly="true" strokeWidth="12"
                 v-bind:valueColor="Variaveis.tmp_Fosfato.cor" />
-              <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_Fosf.valor }">
+              <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Fosf.valor }">
                 Temperatura do Fosfato <br />
                 de {{ Variaveis.SP_Fosfato.valor - Variaveis.Hfunc_Fosfato.valor }} a {{ Variaveis.SP_Fosfato.valor +
                     Variaveis.Hfunc_Fosfato.valor
@@ -68,12 +68,12 @@
       </div>
       <!-- TEMPERATURA DA TINTA (KTL) -->
       <div class="p-col-3 box-stretched">
-        <Knob v-bind:modelValue="Variaveis.tmp_KTL.valor" v-bind:size="tamanho1" readonly="true" strokeWidth="18"
+        <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_KTL.valor" v-bind:size="tamanho1" readonly="true" strokeWidth="18"
           v-bind:valueColor="Variaveis.tmp_KTL.cor" />
       </div>
       <!-- TEMPERATURA DA CALDEIRA -->
       <div class="p-col-3 box-stretched">
-        <Knob v-bind:modelValue="Variaveis.tmp_Cald.valor" v-bind:size="tamanho1" :min="0" :max="140" readonly="true"
+        <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.tmp_Cald.valor" v-bind:size="tamanho1" :min="0" :max="140" readonly="true"
           strokeWidth="18" v-bind:valueColor="Variaveis.tmp_Cald.cor" />
       </div>
       <!-- TEMPERATURA DA ESTUFA -->
@@ -81,10 +81,10 @@
         <div class="p-grid">
           <!-- Entrada Estufa -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.temperEntEstEcoat.valor" :size="150" :max="260" readonly="true"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.temperEntEstEcoat.valor" :size="150" :max="260" readonly="true"
               strokeWidth="12" v-bind:valueColor="Variaveis.temperEntEstEcoat.cor" />
           </div>
-          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_TmpEntEst.valor }">
+          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_TmpEntEst.valor }">
             Temperatura da Entrada da Estufa <br />
                 de {{ Variaveis.SP_EntEstfEcoat.valor - Variaveis.Hfunc_EntEstfEcoat.valor }} a {{ Variaveis.SP_EntEstfEcoat.valor +
                     Variaveis.Hfunc_EntEstfEcoat.valor
@@ -92,10 +92,10 @@
           </div>
           <!-- Saída Estufa -->
           <div class="p-col-12">
-            <Knob v-bind:modelValue="Variaveis.temperSaiEstEcoat.valor" :size="150" :max="260" readonly="true"
+            <Knob v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.temperSaiEstEcoat.valor" :size="150" :max="260" readonly="true"
               strokeWidth="12" v-bind:valueColor="Variaveis.temperSaiEstEcoat.cor" />
           </div>
-          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: Variaveis.falha_TmpSaiEst.valor }">
+          <div class="p-col-12 SubTitulo" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_TmpSaiEst.valor }">
             Temperatura da Saída da Estufa<br />
                 de {{ Variaveis.SP_SaiEstfEcoat.valor - Variaveis.Hfunc_SaiEstfEcoat.valor }} a {{ Variaveis.SP_SaiEstfEcoat.valor +
                     Variaveis.Hfunc_SaiEstfEcoat.valor
@@ -105,13 +105,13 @@
       </div>
       <!-- TÍTULOS - LINHA INFERIOR -->
       <div class="p-col-3 SubTitulo1">Temperaturas dos Tanques</div>
-      <div class="p-col-3 SubTitulo1" v-bind:class="{ Falha: Variaveis.falha_tmp_KTL.valor }">
+      <div class="p-col-3 SubTitulo1" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_tmp_KTL.valor }">
         Temperatura da Tinta <br />
                 de {{ Variaveis.SP_KTL.valor - Variaveis.Hfunc_KTL.valor }} a {{ Variaveis.SP_KTL.valor +
                     Variaveis.Hfunc_KTL.valor
                 }}ºC
       </div>
-      <div class="p-col-3 SubTitulo1" v-bind:class="{ Falha: Variaveis.falha_Cald.valor }">
+      <div class="p-col-3 SubTitulo1" v-bind:class="{ Falha: !StatusConnect.ecoat? null : Variaveis.falha_Cald.valor }">
         Temperatura da Caldeira <br />
                 de {{ Variaveis.SP_Cald.valor - Variaveis.Hfunc_Cald.valor }} a {{ Variaveis.SP_Cald.valor +
                     Variaveis.Hfunc_Cald.valor
@@ -134,35 +134,8 @@ export default {
     };
   },
   props: {
-    Variaveis: Object
-    /*
-    temperEntEstEcoat: Number,
-    corTmp_EntEst: String,
-    temperSaiEstEcoat: Number,
-    corTmp_SaiEst: String,
-    tmp_KTL: Number,
-    corTmp_KTL: String,
-    tmp_Cald: Number,
-    corTmp_Cald: String,
-    tmp_Acido1: Number,
-    corTmp_Acido1: String,
-    tmp_Acido2: Number,
-    corTmp_Acido2: String,
-    tmp_Deseng1: Number,
-    corTmp_Deseng1: String,
-    tmp_Deseng2: Number,
-    corTmp_Deseng2: String,
-    tmp_Fosfato: Number,
-    corTmp_Fosfato: String,
-    falha_tmp_KTL: Boolean,
-    falha_Critica: Boolean,
-    falha_Acido1: Boolean,
-    falha_Acido2: Boolean,
-    falha_Desg1: Boolean,
-    falha_Desg2: Boolean,
-    falha_Fosf: Boolean,
-    falha_Cald: Boolean,
-    */
+    Variaveis: Object,
+    StatusConnect: Object
   },
 };
 </script>
