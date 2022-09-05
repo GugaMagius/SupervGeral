@@ -8,7 +8,9 @@ import Graficos from "@/telas/Relatorios/graficos.vue";
 import Historicos from "@/telas/Relatorios/historicos.vue";
 import Rodape from "@/telas/Components/rodape.vue";
 import Utilidades from "@/telas/utilidades.vue";
-import Erro from "@/telas/FalhaComunic.vue"
+import Erro from "@/telas/FalhaComunic.vue";
+import Service from "@/telas/service.vue";
+import Configuracao from "@/telas/configuracao.vue";
 
 const routes = [
     {
@@ -69,6 +71,18 @@ const routes = [
         path: "/erro",
         name: "Erro",
         component: Erro,
+        props: true
+    },
+    {
+        path: "/service",
+        name: "Service",
+        component: Service,
+        props: true
+    },
+    {
+        path: "/configuracao",
+        name: "Configuracao",
+        component: Configuracao,
         props: true
     },
 

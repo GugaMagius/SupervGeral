@@ -2,6 +2,7 @@ var main = require('../../../main')
 var bd = require('../../BD/server')
 const EndereçoWise1 = "10.41.1.222"
 const socketIO = require('../../socket/server')
+const storage = require('../../services/storage')
 
 
 // Inicializa variáveis para tentativas de conexão
@@ -22,6 +23,11 @@ function falhaConexao(msg) {
 
 }
 
+function fecharConexao() {
+        console.log("Fechando conexão.... ")
+    client.close(EndereçoWise1);
+}
+module.exports.fecharConexao = fecharConexao
 
 console.log("INICIANDO Modbus")
 

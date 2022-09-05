@@ -29,6 +29,7 @@ const clientPLC_PP = new ads.Client({
     autoReconnect: false
 });
 
+module.exports.clientPLC_PP = clientPLC_PP
 
 /* #Teste!
 // Opção para conexão sem o ADS da Beckhoff

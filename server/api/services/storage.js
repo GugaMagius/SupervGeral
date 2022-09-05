@@ -15,9 +15,8 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 
         valorAtual = res
 
-      });
       
-      let registroAtual = { DataHora: moment.utc().format("DD/MM/AAAA HH:mm:ss"), Mensagem: value };
+      let registroAtual = { DataHora: moment.utc().format("DD/MM/YYYY HH:mm:ss"), Mensagem: value };
   
       function verifLogAtual() {
   
@@ -43,6 +42,8 @@ if (typeof localStorage === "undefined" || localStorage === null) {
         localStorage.setItem(key, JSON.stringify(valorAtual))
       )
   
+    });
+    
     } else {
   
       localStorage.setItem(key, JSON.stringify(value));

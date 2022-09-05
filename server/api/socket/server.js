@@ -10,11 +10,19 @@ var app = express()
 app.use(cors());
 const http = require('http').createServer(app)
 const main = require('../../main')
+const mestre = require('../../server')
 const BD = require('../BD/server')
-var statusConnect = {ecoat: false, pinturapo: false, auditorio: false}
+var statusConnect = { ecoat: false, pinturapo: false, auditorio: false }
 module.exports.statusConnect = statusConnect
 
+const PLCecoat = require('../comunicacao/Ecoat/server')
+const PLCpinturapo = require('../comunicacao/PinturaPo/server')
+const MDLauditorio = require('../comunicacao/Modbus/server')
+
+const storage = require('../services/storage')
+
 var socketConectado = false; // Status de conexão do socket
+
 
 
 // *************************
@@ -174,6 +182,69 @@ io.on('connection', (socket) => {
         )
     })
 
+    socket.on("conectar", setor => {
+        if (setor === 'ecoat') {
+
+            mestre.instModlEcoat;
+
+        } else if (setor === 'pinturapo') {
+
+            mestre.instModlPP;
+
+        } else if (setor === 'auditorio') {
+
+            mestre.instModlAuditorio;
+
+        }
+    })
+
+    socket.on("desconectar", setor => {
+        if (setor === 'ecoat') {
+
+
+            PLCecoat.clientPLCecoat.disconnect();
+
+        } else if (setor === 'pinturapo') {
+
+            PLCpinturapo.clientPLC_PP.disconnect();
+
+        } else if (setor === 'auditorio') {
+
+            MDLauditorio.fecharConexao();
+        }
+        console.log("Recebido comando para desconectar o setor: ", setor)
+    })
+
+    socket.on("consultaLog", () => {
+
+        storage.getLS("log").then(res => {
+
+            socket.emit("respLog", res)
+
+        }
+        )
+
+    })
+
+    
+    socket.on("consultaConfig", () => {
+
+        storage.getLS("config").then(res => {
+
+            socket.emit("respConfig", res)
+
+        }
+        )
+
+    })
+
+    
+    socket.on("salvaConfig", (valConfig) => {
+
+        storage.setLS("config", valConfig)
+
+        
+    })
 
 })
 

@@ -4,11 +4,11 @@
       <div class="p-grid">
         <!-- TEMPERATURA DA TINTA (KTL) -->
         <div class="p-col-6 box">
-          <Utilidades :Variaveis="Variaveis" />
+          <Utilidades :Variaveis="Variaveis" :StatusConnect="StatusConnect" />
         </div>
         <!-- TEMPERATURA DA CALDEIRA -->
         <div class="p-col-6 box">
-          <KtlCaldeira :Variaveis="Variaveis" />
+          <KtlCaldeira :Variaveis="Variaveis" :StatusConnect="StatusConnect" />
         </div>
       </div>
     </div>
@@ -33,7 +33,9 @@ export default {
   },
 
   props: {
-    Variaveis: Object
+    Variaveis: Object,
+    StatusConnect: Object
+    
   },
 };
 </script>

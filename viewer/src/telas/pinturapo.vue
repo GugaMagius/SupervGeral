@@ -382,7 +382,7 @@ export default {
     };
   },
   methods: {},
-  nome: "pinturapo",
+  name: "pinturapo",
   components: {
     Fila,
   },

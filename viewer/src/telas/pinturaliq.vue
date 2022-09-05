@@ -269,7 +269,7 @@
 
 <script>
 export default {
-  nome: "pinturapo",
+  name: "pinturaliq",
   data() {
     return {
       Titulo: " - Pintura Líquida"

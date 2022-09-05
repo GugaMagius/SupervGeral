@@ -28,6 +28,7 @@ const clientPLCecoat = new ads.Client({
     targetAdsPort: 851,
     autoReconnect: false
 });
+module.exports.clientPLCecoat = clientPLCecoat
 
 
 /* #Teste!

@@ -32,6 +32,8 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup'; 
 import Dropdown from 'primevue/dropdown';
 import ProgressBar from 'primevue/progressbar';
+import AutoComplete from 'primevue/autocomplete';
+import InputText from 'primevue/inputtext';
 
 
 
@@ -66,6 +68,8 @@ app.component('Column', Column);
 app.component('ColumnGroup', ColumnGroup);
 app.component('Dropdown', Dropdown);
 app.component('ProgressBar', ProgressBar);
+app.component('AutoComplete', AutoComplete);
+app.component('InputText', InputText);
 
 
 
