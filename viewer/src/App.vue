@@ -2,31 +2,19 @@
   <div class="Principal">
     <div class="Titulo">
       <div class="logo">
-        <img
-          src="../public/logoMagius.png"
-          style="width: auto; height: auto; max-width: 300px; max-height: 300px"
-        />
+        <img src="../public/logoMagius.png" style="width: auto; height: auto; max-width: 300px; max-height: 300px" />
       </div>
 
       <h2>Sistema Supervisório Magius {{ $route.name }} &nbsp;</h2>
       <div>{{ isConnected ? "" : " *** Servidor Desconectado ***" }}</div>
 
       <div class="botaoinicio">
-        <Button
-          type="button"
-          icon="pi pi-bars"
-          @click="toggle"
-          aria-haspopup="true"
-          aria-controls="overlay_menu"
-        />
+        <Button type="button" icon="pi pi-bars" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
       </div>
     </div>
     <div class="RouterView" v-if="dadosRecebidos">
-      <router-view
-      :Variaveis="Variaveis"
-      :StatusConnect="statusConnect"
-      />
+      <router-view :Variaveis="Variaveis" :StatusConnect="statusConnect" :Contatos="contatos"/>
     </div>
 
     <div class="Rodape">
@@ -57,7 +45,8 @@ export default {
       Titulo: "",
       socketMessage: null,
       Variaveis: {},
-      statusConnect: {ecoat: false, pinturapo: false, auditorio: false}
+      contatos: [],
+      statusConnect: { ecoat: false, pinturapo: false, auditorio: false }
     };
   },
 
@@ -161,8 +150,14 @@ export default {
     inicializaVar(data) {
       this.Variaveis = data;
       if (data !== undefined) {
-        this.dadosRecebidos=true;
+        this.dadosRecebidos = true;
       }
+    },
+
+
+    contatos(contatos) {
+      this.contatos = contatos
+
     },
 
     falhas(data) {
@@ -175,7 +170,7 @@ export default {
       const Cor = data[2];
 
       this.Variaveis[Variavel]["valor"] = Valor;
-      
+
       // atualiza status da cor
       if (this.Variaveis[Variavel]["cor"] != undefined) {
         this.Variaveis[Variavel]["cor"] = Cor;
@@ -192,7 +187,6 @@ export default {
 </script>
 
 <style>
-  
 .logo {
   position: absolute;
   left: 0;

@@ -1,6 +1,7 @@
-var Variaveis = require('./Eqptos').Variaveis;
+
 const socketFl = require('./api/socket/server');
 const bd = require('./api/BD/server');
+const storage = require('./api/services/storage')
 
 
 const corOK = "Lightgreen"
@@ -13,23 +14,33 @@ console.log("INICIANDO MAIN")
 const enviaEmail = require('./api/services/enviaEmail')
 const enviaTelefone = require('./api/services/enviaTelefone');
 const enviaSMS = require('./api/services/enviaSMS');
-const contatos = require('./contatos'); // Arquivo de configuração 
+//const contatos = require('./contatos'); // Arquivo de configuração
 const { json } = require('express');
 var Falhas = {}; // Lista de falhas
+var Variaveis = {} // Lista de variáveis monitoradas 
+var contatos = [] // Lista de contatos para envio de alertas
+module.exports.contatos = contatos
+
+//importa lista de contatos do Storage
+storage.getLS("contatos").then(res=>{
+    contatos = res
+})
 
 
 // função para listar variáveis e seus status para outros módulos
-
 function listaAtualizada() {
     //console.log("iniciando PROMISE para enviar Variaveis", Variaveis)
     return new Promise(
         function (resolve, reject) {
-            resolve(Variaveis)
+            storage.getLS("config").then((resp)=>{
+                Variaveis = resp
+                resolve(resp)
+            })
         }
     )
 }
-
 module.exports.listaAtualizada = listaAtualizada
+
 
 
 // função para listar falhas para outros módulos
@@ -202,6 +213,11 @@ function iniciarBD() {
 
 iniciarBD();
 
+setTimeout(()=>{
+    console.log(contatos)
+    console.log("Teste adm",contatos[contatos.indexOf("Administrador")])
+
+}, 500)
 
 
 function atualizaBD(nomeVariavel) {
@@ -217,8 +233,8 @@ function atualizaBD(nomeVariavel) {
         enviaEmail( // Chama função e envia e-mail
             "Erro BD",
             msgErro,
-            contatos.administrador.nome,
-            contatos.administrador.email
+            contatos[contatos.indexOf("Administrador")]["nome"],
+            contatos[contatos.indexOf("Administrador")]["email"]
         );
         console.log(msgErro)
     }

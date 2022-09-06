@@ -5,7 +5,6 @@
   "pkg": {
     "assets": [
       "api/**/*",
-      "Eqptos.js",
       "contatos.js",
       "main.js"
     ],

@@ -23,6 +23,8 @@ const storage = require('../services/storage')
 
 var socketConectado = false; // Status de conexão do socket
 
+const contatos = require('../../contatos')
+
 
 
 // *************************
@@ -98,6 +100,8 @@ io.on('connection', (socket) => {
     socketConectado = true
 
     console.log('New connection', socket.id)
+
+    socket.emit("contatos", contatos.responsavel)
 
 
     // **********************************
@@ -246,6 +250,12 @@ io.on('connection', (socket) => {
         
     })
 
+    socket.on("salvaContatos", (listaContatos) => {
+
+        storage.setLS("contatos", listaContatos)
+
+        
+    })
 })
 
 module.exports.io = io

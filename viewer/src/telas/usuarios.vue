@@ -1,15 +1,43 @@
 <template>
     <div>
-        <div class="multiselect">
+        <div class="p-fluid grid formgrid" v-if="Contatos.length >= 0">
+            <table>
+                <tr>
+                    <th width="20%">
+                        Nome:
+                    </th>
+                    <th width="20%">
+                        Telefone:
+                    </th>
+                    <th width="60%">
+                        E-mail:
+                    </th>
+                </tr>
+                <tr v-for="[index, contato] in Object.entries(contatos)" :key="contato.nome">
+                    <td>
+                       <InputText type="text" v-model="contatos[index]['nome']" />
+                    </td>
+                    <td>
+                        <InputText type="text" v-model="contatos[index]['telefone']" />
+                    </td>
+                    <td>
+                        <InputText type="text" v-model="contatos[index]['email']" />
+                    </td>
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="apagaContato(index)" />
+                </tr>
+            </table>
 
-            <span class="p-float-label" v-if="Object.keys(Variaveis).length >= 0"><br>
-                <span for="selVar"> Variável: </span>
-                <AutoComplete v-model="varSelecionada" @complete="searchValue($event)" :dropdown="true"
-                    :suggestions="variaveisMenu" placeholder="Variável" />
-
-            </span>
         </div>
 
+        <div class="conexao">
+            <Button label="Novo Contato" icon="pi pi-plus" class="p-button-success mr-2"
+                        @click="contatos.push({nome:'', telefone:'', email:''})" />
+            <Button label="Salvar contatos" icon="pi pi-save" class="p-button-primary" iconPos="left"
+                @click="salvarContatos()" /><br><br>
+        </div>
+
+
+        <!--
         <div v-if="Object.keys(Variaveis).includes(varSelecionada)">
             <div v-for="[prop, valor] in Object.entries(listaVariaveis[varSelecionada])" :key="prop">
                 <span v-if="prop != 'avisar'">
@@ -66,11 +94,7 @@
                 </span>
             </div>
         </div>
-
-        <div class="conexao">
-            <Button label="Salvar configuração" icon="pi pi-save" class="p-button-primary"
-                iconPos="left" @click="salvarConfig()" /><br><br>
-        </div>
+-->
 
 
 
@@ -80,31 +104,23 @@
 
 
 export default {
-    name: "configuracao",
+    name: "usuarios",
     props: {
-        Variaveis: Object,
-        StatusConnect: Object,
+        Contatos: Array
     },
     mounted() {
-        this.listaVariaveis = this.Variaveis
-        this.variaveisMenu = Object.keys(this.listaVariaveis)
+        this.contatos = this.Contatos
 
     },
     data() {
         return {
-            listaVariaveis: {},
-            variaveisMenu: [],
-            varSelecionada: [],
-            novoContato: false,
-            avisarTmp: {},
-            Logs: {}
-
-
+            contatos: []
         }
     },
+
     methods: {
-        salvarConfig() {
-            this.$socket.emit("salvaConfig", this.Variaveis)
+        salvarContatos() {
+            this.$socket.emit("salvaContatos", this.contatos)
         },
         searchValue(event) {
             console.log(event)
@@ -124,8 +140,7 @@ export default {
             this.novoContato = false;
         },
         apagaContato(index) {
-            console.l
-            delete this.listaVariaveis[this.varSelecionada]['avisar'][index]
+            delete this.contatos[index]
         }
     },
     sockets: {
@@ -133,7 +148,7 @@ export default {
         respLog(resp) {
             this.Logs = resp
 
-        }
+        },
 
     }
 }
