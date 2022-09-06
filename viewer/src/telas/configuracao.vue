@@ -1,26 +1,67 @@
 <template>
     <div>
         <div class="multiselect">
-            {{ listaVariaveis[varSelecionada] }}
 
-            <span class="p-float-label" v-if="Object.keys(Variaveis).length >= 0">
-                <AutoComplete v-model="varSelecionada" :dropdown="true" :suggestions="variaveisMenu"
-                    @complete="searchValue($event)" placeholder="Variável" />
-                <label for="selVar"> Centro de Custo: </label>
+            <span class="p-float-label" v-if="Object.keys(Variaveis).length >= 0"><br>
+                <span for="selVar"> Variável: </span>
+                <AutoComplete v-model="varSelecionada" @complete="searchValue($event)" :dropdown="true"
+                    :suggestions="variaveisMenu" placeholder="Variável" />
 
             </span>
         </div>
 
-        <div v-if="varSelecionada.length > 1">
-            <div v-for="[prop] in Object.entries(listaVariaveis[varSelecionada])" :key="prop">
-                <span class="p-float-label" v-if="prop != 'avisar'">
-                    <h5>{{prop}}</h5>
+        <div v-if="Object.keys(Variaveis).includes(varSelecionada)">
+            <div v-for="[prop, valor] in Object.entries(listaVariaveis[varSelecionada])" :key="prop">
+                <span v-if="prop != 'avisar'">
+                    <span>{{ prop }}: </span>
                     <InputText id="input" type="text" v-model="listaVariaveis[varSelecionada][prop]" />
-                </span>
+                </span><br>
                 <span class="p-float-label" v-if="prop === 'avisar'">
-                    <div v-for="propAvisar in prop" :key="propAvisar">
-                    <h5>{{propAvisar}}</h5>
-                        <InputText id="inputAvisar" type="text" v-model="listaVariaveis[varSelecionada]['avisar'][propAvisar]" />
+
+                    <Button label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                        @click="novoContato = !novoContato" />
+                    <div v-if="novoContato">
+                        <table>
+                            <td>
+                                Nome:
+                                <InputText type="text" v-model="avisarTmp['nome']" />
+
+                            </td>
+                            <td>
+                                SMS:
+                                <Checkbox v-model="avisarTmp['sms']" :binary="true" />
+                            </td>
+                            <td>
+                                Telefone:
+                                <Checkbox v-model="avisarTmp['telefone']" :binary="true" />
+                            </td>
+                            <td>
+                                E-mail:
+                                <Checkbox v-model="avisarTmp['email']" :binary="true" />
+                            </td>
+                            <td>
+                                <Button icon="pi pi-plus" class="p-button-rounded p-button-warning"
+                                    @click="salvaContato()" />
+                            </td>
+                        </table>
+                    </div>
+                    <div v-for="[index, usuario] in Object.entries(valor)" :key="usuario">
+
+                        <h5>{{ usuario.nome }}: </h5>
+                        <InputText type="text" v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" />
+
+                        SMS:
+                        <Checkbox v-model="listaVariaveis[varSelecionada]['avisar'][index]['sms']" :binary="true" />
+                        Telefone:
+                        <Checkbox v-model="listaVariaveis[varSelecionada]['avisar'][index]['telefone']"
+                            :binary="true" />
+                        E-mail:
+                        <Checkbox v-model="listaVariaveis[varSelecionada]['avisar'][index]['email']" :binary="true" />
+                        <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            @click="apagaContato(index)" />
+
+
+
                     </div>
                 </span>
             </div>
@@ -82,6 +123,8 @@ export default {
             listaVariaveis: {},
             variaveisMenu: [],
             varSelecionada: [],
+            novoContato: false,
+            avisarTmp: {},
             Logs: {}
 
 
@@ -95,14 +138,22 @@ export default {
             console.log(event)
             setTimeout(() => {
                 if (!event.query.trim().length) {
-                    this.variaveisMenu = [...Object.keys(this.Variaveis)];
+                    this.variaveisMenu = Object.keys(this.Variaveis);
                 }
                 else {
                     this.variaveisMenu = Object.keys(this.Variaveis).filter((element) => {
-                        return element.includes(event.query);
+                        return element.includes(event.query.trim());
                     });
                 }
-            }, 450);
+            }, 250);
+        },
+        salvaContato() {
+            this.listaVariaveis[this.varSelecionada]['avisar'].push(this.avisarTmp);
+            this.novoContato = false;
+        },
+        apagaContato(index) {
+            console.l
+            delete this.listaVariaveis[this.varSelecionada]['avisar'][index]
         }
     },
     sockets: {

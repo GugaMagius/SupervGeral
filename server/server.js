@@ -29,3 +29,7 @@ function instModlAuditorio () {
 }
 module.exports.instModlAuditorio = instModlAuditorio
 
+instModlEcoat();
+instModlPP();
+instModlAuditorio();
+
