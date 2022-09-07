@@ -48,7 +48,8 @@
                     <div v-for="[index, usuario] in Object.entries(valor)" :key="usuario">
 
                         <h5>{{ usuario.nome }}: </h5>
-                        <InputText type="text" v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" />
+                        <Dropdown v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" :options="Object.keys(Contatos)" placeholder="Selecione um contato" />
+                        <!--<InputText type="text" v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" />-->
 
                         SMS:
                         <Checkbox v-model="listaVariaveis[varSelecionada]['avisar'][index]['sms']" :binary="true" />
@@ -84,6 +85,7 @@ export default {
     props: {
         Variaveis: Object,
         StatusConnect: Object,
+        Contatos: Object
     },
     mounted() {
         this.listaVariaveis = this.Variaveis

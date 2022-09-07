@@ -11,7 +11,7 @@ import Utilidades from "@/telas/utilidades.vue";
 import Erro from "@/telas/FalhaComunic.vue";
 import Service from "@/telas/service.vue";
 import Configuracao from "@/telas/configuracao.vue";
-import Usuarios from "@/telas/usuarios.vue";
+import Contatos from "@/telas/contatos.vue";
 
 const routes = [
     {
@@ -87,9 +87,9 @@ const routes = [
         props: true
     },
     {
-        path: "/usuarios",
-        name: "Usuarios",
-        component: Usuarios,
+        path: "/contatos",
+        name: "Contatos",
+        component: Contatos,
         props: true
     },
 

@@ -45,7 +45,7 @@ export default {
       Titulo: "",
       socketMessage: null,
       Variaveis: {},
-      contatos: [],
+      contatos: {},
       statusConnect: { ecoat: false, pinturapo: false, auditorio: false }
     };
   },
@@ -115,9 +115,9 @@ export default {
         } catch (err) {
           console.log("erro ao acessar navegação atual: ", err);
         }
-        //#Teste this.$router.push("Erro");
+        this.$router.push("Erro"); //#Teste conexao
       } else {
-        //#Teste this.$router.push(this.rotaAnt);
+        this.$router.push(this.rotaAnt); //#Teste conexao
       }
     },
   },

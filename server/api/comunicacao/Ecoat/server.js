@@ -21,7 +21,7 @@ enviaEmail( // Chama função e envia e-mail
 );
 */
 
-
+/*
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
 const clientPLCecoat = new ads.Client({
     targetAmsNetId: '5.42.86.72.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
@@ -29,9 +29,9 @@ const clientPLCecoat = new ads.Client({
     autoReconnect: false
 });
 module.exports.clientPLCecoat = clientPLCecoat
+*/
 
-
-/* #Teste!
+///* #Teste!
 
 // Opção para conexão sem o ADS da Beckhoff
 const clientPLCecoat = new ads.Client({
@@ -46,7 +46,7 @@ const clientPLCecoat = new ads.Client({
 })
 
 
-*/
+//*/
 
 function falhaConexao(msg) {
 

@@ -14,25 +14,23 @@ console.log("INICIANDO MAIN")
 const enviaEmail = require('./api/services/enviaEmail')
 const enviaTelefone = require('./api/services/enviaTelefone');
 const enviaSMS = require('./api/services/enviaSMS');
-//const contatos = require('./contatos'); // Arquivo de configuração
-const { json } = require('express');
 var Falhas = {}; // Lista de falhas
 var Variaveis = {} // Lista de variáveis monitoradas 
-var contatos = [] // Lista de contatos para envio de alertas
-module.exports.contatos = contatos
+var contatos = {} // Lista de contatos para envio de alertas
+
 
 //importa lista de contatos do Storage
-storage.getLS("contatos").then(res=>{
-    contatos = res
-})
+storage.getLS("contatos").then(res => {
+    contatos = res;
 
+})
 
 // função para listar variáveis e seus status para outros módulos
 function listaAtualizada() {
     //console.log("iniciando PROMISE para enviar Variaveis", Variaveis)
     return new Promise(
         function (resolve, reject) {
-            storage.getLS("config").then((resp)=>{
+            storage.getLS("config").then((resp) => {
                 Variaveis = resp
                 resolve(resp)
             })
@@ -51,18 +49,23 @@ module.exports.listaFalhas = listaFalhas
 
 // função para verificar situação das falhas e atualizar clientes
 function verificaFalhas() {
+
     let variavFalhas = Object.keys(Falhas)
+
     if (variavFalhas.length > 0) {
+
         variavFalhas.forEach(element => {
-            if  ((Variaveis[element]["valor"] !== true) && (Variaveis[element]["cor"] !== corFalha)) {
+
+            if ((Variaveis[element]["valor"] !== true) && (Variaveis[element]["cor"] !== corFalha)) {
+
                 console.log("Excluindo falha da lista: ", element)
-                
+
                 delete Falhas[element]; // excluí falha da lista
 
                 socketFl.atualizaFalhas(Falhas)
 
             }
-            
+
         });
     }
 
@@ -193,31 +196,16 @@ function iniciarBD() {
             let MesAnt = dataAntCalc.getMonth() + 1
             let DiaAnt = dataAntCalc.getDate()
 
-
-            let AnoAtl = dataAtual.getFullYear()
-            let MesAtl = dataAtual.getMonth() + 1
-            let DiaAtl = dataAtual.getDate()
-
-
-
             let dataAnterCons = "'" + AnoAnt + "-" + MesAnt + "-" + DiaAnt + " 00:00'"
 
             setInterval(bd.limpaBD, 86400000, Variavel[0], dataAnterCons) // Realiza a verificação diariamente (86400000 milisegundos)
 
         }
 
-
-
     }
 }
 
 iniciarBD();
-
-setTimeout(()=>{
-    console.log(contatos)
-    console.log("Teste adm",contatos[contatos.indexOf("Administrador")])
-
-}, 500)
 
 
 function atualizaBD(nomeVariavel) {
@@ -233,8 +221,8 @@ function atualizaBD(nomeVariavel) {
         enviaEmail( // Chama função e envia e-mail
             "Erro BD",
             msgErro,
-            contatos[contatos.indexOf("Administrador")]["nome"],
-            contatos[contatos.indexOf("Administrador")]["email"]
+            contatos["Administrador"]["nome"],
+            contatos["Administrador"]["email"]
         );
         console.log(msgErro)
     }

@@ -23,9 +23,6 @@ const storage = require('../services/storage')
 
 var socketConectado = false; // Status de conexão do socket
 
-const contatos = require('../../contatos')
-
-
 
 // *************************
 // Configurações do socket *
@@ -101,7 +98,13 @@ io.on('connection', (socket) => {
 
     console.log('New connection', socket.id)
 
-    socket.emit("contatos", contatos.responsavel)
+    storage.getLS("contatos").then((res)=>{
+
+        console.log("lista de contatos: ", res)
+
+        socket.emit("contatos", res)
+
+    })
 
 
     // **********************************

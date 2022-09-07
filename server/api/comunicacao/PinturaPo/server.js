@@ -21,17 +21,18 @@ enviaEmail( // Chama função e envia e-mail
 );
 */
 
-
+/*
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
 const clientPLC_PP = new ads.Client({
     targetAmsNetId: '5.88.201.147.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
     targetAdsPort: 851,
     autoReconnect: false
 });
+*/
 
 module.exports.clientPLC_PP = clientPLC_PP
 
-/* #Teste!
+///* #Teste!
 // Opção para conexão sem o ADS da Beckhoff
 const clientPLC_PP = new ads.Client({
     localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
@@ -44,7 +45,7 @@ const clientPLC_PP = new ads.Client({
     autoReconnect: false
 })
 
-*/
+//*/
 
 function falhaConexao(msg) {
 
