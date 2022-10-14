@@ -6,7 +6,7 @@ const config = require('../../configBD').config // Configurações de acesso ao 
 function insertBD(tabela, valor, param1, param2) {
     //console.log("valores a serem inseridos na tabela: ", tabela, "Valor: ", valor, "Parametro1: ", param1, "Parametro2: ", param2)
     // connect to your database
-    //return //#Teste
+    return //#teste
 
     try {
 
