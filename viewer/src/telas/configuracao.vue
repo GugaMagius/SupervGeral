@@ -12,10 +12,14 @@
 
         <div v-if="Object.keys(Variaveis).includes(varSelecionada)">
             <div v-for="[prop, valor] in Object.entries(listaVariaveis[varSelecionada])" :key="prop">
+                
                 <span v-if="prop != 'avisar'">
                     <span>{{ prop }}: </span>
                     <InputText id="input" type="text" v-model="listaVariaveis[varSelecionada][prop]" />
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning p-button-sm"
+                            @click="apagaProp(prop)" />
                 </span>
+
                 <span class="p-float-label" v-if="prop === 'avisar'">
 
                     <Button label="New" icon="pi pi-plus" class="p-button-success mr-2"
@@ -48,7 +52,8 @@
                     <div v-for="[index, usuario] in Object.entries(valor)" :key="usuario">
 
                         <h5>{{ usuario.nome }}: </h5>
-                        <Dropdown v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" :options="Object.keys(Contatos)" placeholder="Selecione um contato" />
+                        <Dropdown v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']"
+                            :options="Object.keys(Contatos)" placeholder="Selecione um contato" />
                         <!--<InputText type="text" v-model="listaVariaveis[varSelecionada]['avisar'][index]['nome']" />-->
 
                         SMS:
@@ -65,14 +70,14 @@
 
                     </div>
                 </span>
+
             </div>
         </div>
 
         <div class="conexao">
-            <Button label="Salvar configuração" icon="pi pi-save" class="p-button-primary"
-                iconPos="left" @click="salvarConfig()" /><br><br>
+            <Button label="Salvar configuração" icon="pi pi-save" class="p-button-primary" iconPos="left"
+                @click="salvarConfig()" /><br><br>
         </div>
-
 
 
     </div>
@@ -99,11 +104,35 @@ export default {
             varSelecionada: [],
             novoContato: false,
             avisarTmp: {},
+            variavelTmp: {
+                modulo: "",
+                endereco: "",
+                casasDec: null,
+                cor: "",
+                escala: 0,  // Valor para escala entre o valor recebido e o valor disponibilizado
+                SetPoint: "", // Setpoint de controle da variável
+                hist_func: "", // Tamanho da variável de histerese de funcionamento (fora desta faixa indica alerta)
+                hist_falha: "", // Tamanho da variável de histerese para Falha (fora desta faixa indica FALHA)
+                min2: "", // Valor limite mínimo para indicação de FALHA
+                min1: "", // Valor limite mínimo para indicação de ALERTA
+                max1: "", // Valor limite máximo para indicação de ALERTA
+                max2: "", // Valor limite máximo para indicação de FALHA
+                periodoBD: 0,
+                flagBD: false,
+                condBD: "",
+                flagAviso: false,
+                borda: false,
+                datHraUltDisp: null,
+                tmpCondBD: null,
+                periodoAq: "0",
+                maxBD: 0,
+                maxV: 0, // Valor máximo para os valores de leitura (em caso de ultrapassagem deste valor, será apresentado "Max")
+                mensagem: "", // Mensagem de falha para aviso por e-mail, telefone, supervisorio
+            },
             Logs: {}
-
-
         }
     },
+    
     methods: {
         salvarConfig() {
             this.$socket.emit("salvaConfig", this.Variaveis)
@@ -126,8 +155,10 @@ export default {
             this.novoContato = false;
         },
         apagaContato(index) {
-            console.l
             delete this.listaVariaveis[this.varSelecionada]['avisar'][index]
+        },
+        apagaProp(propriedade) {
+            console.log("Apagar propriedade: ", propriedade)
         }
     },
     sockets: {

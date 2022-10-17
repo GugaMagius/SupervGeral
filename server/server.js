@@ -10,6 +10,7 @@ const bd = require('./api/BD/server')
 
 
 function instModlEcoat () {
+    
     const plcEcoat = require('./api/comunicacao/Ecoat/server')
 }
 module.exports.instModlEcoat = instModlEcoat
