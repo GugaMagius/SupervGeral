@@ -89,7 +89,6 @@
                 de {{ Variaveis.SP_EntEstfEcoat.valor - Variaveis.Hfunc_EntEstfEcoat.valor }} a {{ Variaveis.SP_EntEstfEcoat.valor +
                     Variaveis.Hfunc_EntEstfEcoat.valor
                 }}ºC <br>
-                SP: {{Variaveis.SP_EntEstfEcoat.valor}} / HstsF: {{Variaveis.Hfunc_EntEstfEcoat.valor}} / HstsF: {{Variaveis.Hfalha_EntEstfEcoat.valor}}
 
           </div>
           <!-- Saída Estufa -->

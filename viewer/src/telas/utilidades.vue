@@ -32,7 +32,7 @@
         </td>
         <td>
           <!-- VAZÃO DE AR-COMPRIMIDO -->
-          <div>
+          <div v-if="Variaveis.vazaoArComp.valor>0">
             <Knob
               v-bind:modelValue="!StatusConnect.ecoat? null : Variaveis.vazaoArComp.valor"
               v-bind:size="240"
@@ -53,7 +53,7 @@
           Nível Caixa água Refeitório<br />
           acima de {{Variaveis.min1_Ag_Ref.valor}} %
         </td>
-        <td>
+        <td v-if="Variaveis.vazaoArComp.valor>0">
           Vazão de ar-comprimido<br />
           abaixo de {{Variaveis.max_VazArComp1.valor}} m3/h
         </td>
