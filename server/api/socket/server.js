@@ -98,7 +98,8 @@ io.on('connection', (socket) => {
 
     console.log('New connection', socket.id)
 
-    storage.getLS("contatos").then((res)=>{
+
+    storage.getLS("contatos").then((res) => {
 
         console.log("lista de contatos: ", res)
 
@@ -112,14 +113,26 @@ io.on('connection', (socket) => {
     // ********************************** 
 
     // Envia lista de variáveis com os valores atualizados
+
+    main.listaAtualizada().then(
+        function(res) {
+            socket.emit("inicializaVar", res)
+        })
+    
+        /*
+
     var Lista = new Promise(
         function (resolve, reject) {
             resolve(main.listaAtualizada())
         })
 
+
     Lista.then(function (val) {
         socket.emit("inicializaVar", val)
     })
+    */
+
+
 
     // Atualiza falhas presentes nos sistemas
     var Falhas = new Promise(
@@ -209,11 +222,11 @@ io.on('connection', (socket) => {
         if (setor === 'ecoat') {
 
 
-            PLCecoat.clientPLCecoat.disconnect();
+            PLCecoat.clientPLC.disconnect();
 
         } else if (setor === 'pinturapo') {
 
-            PLCpinturapo.clientPLC_PP.disconnect();
+            PLCpinturapo.clientPLC.disconnect();
 
         } else if (setor === 'auditorio') {
 
@@ -233,7 +246,7 @@ io.on('connection', (socket) => {
 
     })
 
-    
+
     socket.on("consultaConfig", () => {
 
         storage.getLS("config").then(res => {
@@ -245,19 +258,69 @@ io.on('connection', (socket) => {
 
     })
 
-    
+
     socket.on("salvaConfig", (valConfig) => {
 
         storage.setLS("config", valConfig)
 
-        
+
+    })
+
+    socket.on("lerVariavIndiv", (parametros) => {
+
+        try {
+            eval(parametros.Modulo).clientPLC.readSymbol(`${parametros.Arquivo}.${parametros.Endereco}`)
+                .then(
+                    res => {
+                        let respAtualiz = parametros
+                        respAtualiz.ValorAtual = res.value
+                        socket.emit("variavelIndv", respAtualiz)
+                    }
+                )
+                .catch(
+                    err => {
+                        console.log('Something failed:', err)
+                    })
+
+        } catch (err) {
+            console.log("Falha ao tentar ler o módulo com os seguintes parâmetros: ", parametros, " - Erro: ", err)
+
+        }
+
+
+    })
+
+    socket.on("gravaVariavIndiv", async (parametros) => {
+
+        try {
+            eval(parametros.Modulo).clientPLC.writeSymbol(`${parametros.Arquivo}.${parametros.Endereco}`, parametros.ValorNovo)
+            .then(
+                res => {
+                    let respAtualiz = parametros
+                    respAtualiz.ValorAtual = res.value
+                    socket.emit("variavelIndv", respAtualiz)
+                }
+            )
+            .catch(
+                err => {
+                    console.log('Something failed:', err)
+                })
+        } catch (err) {
+            
+            console.log("Falha ao tentar gravar no módulo com os seguintes parâmetros: ", parametros, " - Erro: ", err)
+
+        }
+
+
+
+
     })
 
     socket.on("salvaContatos", (listaContatos) => {
 
         storage.setLS("contatos", listaContatos)
 
-        
+
     })
 })
 

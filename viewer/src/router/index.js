@@ -12,6 +12,7 @@ import Erro from "@/telas/FalhaComunic.vue";
 import Service from "@/telas/service.vue";
 import Configuracao from "@/telas/configuracao.vue";
 import Contatos from "@/telas/contatos.vue";
+import Variaveis from "@/telas/variaveis.vue";
 
 const routes = [
     {
@@ -90,6 +91,12 @@ const routes = [
         path: "/contatos",
         name: "Contatos",
         component: Contatos,
+        props: true
+    },
+    {
+        path: "/variaveis",
+        name: "Variaveis",
+        component: Variaveis,
         props: true
     },
 

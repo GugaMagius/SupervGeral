@@ -22,7 +22,7 @@ enviaEmail( // Chama função e envia e-mail
 */
 
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
-const clientPLC_PP = new ads.Client({
+const clientPLC = new ads.Client({
     targetAmsNetId: '5.88.201.147.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
     targetAdsPort: 851,
     autoReconnect: false
@@ -32,7 +32,7 @@ const clientPLC_PP = new ads.Client({
 
 ///* #Teste!
 // Opção para conexão sem o ADS da Beckhoff
-// const clientPLC_PP = new ads.Client({
+// const clientPLC = new ads.Client({
 //     localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
 //     localAdsPort: 32751,                    //Can be anything that is not used
 //     targetAmsNetId: '5.88.201.147.1.1',       // Target CLP Pintura pó/líquida
@@ -45,7 +45,7 @@ const clientPLC_PP = new ads.Client({
 
 //*/
 
-module.exports.clientPLC_PP = clientPLC_PP
+module.exports.clientPLC = clientPLC
 
 
 function falhaConexao(msg) {
@@ -64,13 +64,13 @@ async function verificaPLC() {
 
     try {
 
-        let respStatus = await clientPLC_PP.readPlcRuntimeState();
+        let respStatus = await clientPLC.readPlcRuntimeState();
 
         if (respStatus.adsState !== 5) {
 
             let msgErro = 'CLP do E-coat desconectado: ' + respStatus
             falhaConexao(msgErro)
-            clientPLC_PP.disconnect();
+            clientPLC.disconnect();
 
         } else {
 
@@ -90,12 +90,13 @@ async function verificaPLC() {
 
 }
 
+
 function conectar() {
 
     try {
 
 
-        clientPLC_PP.connect()
+        clientPLC.connect()
             .then((resp) => {
 
                 socketIO.statusConnect.pinturapo = true;
@@ -115,8 +116,8 @@ function conectar() {
 
                             if (Variavel[1].modulo === "PLCPinturaPo") {
 
-                                clientPLC_PP.subscribe(Variavel[1].endereco, (data, sub) => {
-                                    //Note: The sub parameter is the same as returned by clientPLC_PP.subcribe()
+                                clientPLC.subscribe(Variavel[1].endereco, (data, sub) => {
+                                    //Note: The sub parameter is the same as returned by clientPLC.subcribe()
                                     try {
                                         main.tratDados(Variavel, data.value);
                                     } catch (err) {

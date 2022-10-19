@@ -18,11 +18,14 @@ var Falhas = {}; // Lista de falhas
 var Variaveis = {} // Lista de variáveis monitoradas 
 var contatos = {} // Lista de contatos para envio de alertas
 
-
 //importa lista de contatos do Storage
 storage.getLS("contatos").then(res => {
     contatos = res;
 
+})
+
+storage.getLS("config").then((resp) => {
+    Variaveis = resp
 })
 
 // função para listar variáveis e seus status para outros módulos
@@ -30,10 +33,7 @@ function listaAtualizada() {
     //console.log("iniciando PROMISE para enviar Variaveis", Variaveis)
     return new Promise(
         function (resolve, reject) {
-            storage.getLS("config").then((resp) => {
-                Variaveis = resp
-                resolve(resp)
-            })
+            resolve(Variaveis)
         }
     )
 }
@@ -78,7 +78,7 @@ setInterval(verificaFalhas, 60000)
 async function verificaStatus(dados) {
     return new Promise(
         function (resolve, reject) {
-            //console.log("DADOS RECEBIDOS: " + dados[0])
+            //console.log("DADOS RECEBIDOS: ", dados)
             let Valor = dados[1]["valor"]
 
             try {
@@ -136,15 +136,15 @@ async function verificaStatus(dados) {
                         }
 
                     } else {
-                        let SP = Variaveis[dados[0]]["SetPoint"];
-                        let valorSP = Variaveis[SP]["valor"];
-                        let HistFunc = Variaveis[dados[0]]["hist_func"];
-                        let valorHFunc = Variaveis[HistFunc]["valor"];
-                        let HistFalha = Variaveis[dados[0]]["hist_falha"];
-                        let valorHFalha = Variaveis[HistFalha]["valor"];
-
-
                         try {
+                        let SP = Variaveis[dados[0]]["SetPoint"];
+                        let valorSP = parseFloat(Variaveis[SP]["valor"]);
+                        let HistFunc = Variaveis[dados[0]]["hist_func"];
+                        let valorHFunc = parseFloat(Variaveis[HistFunc]["valor"]);
+                        let HistFalha = Variaveis[dados[0]]["hist_falha"];
+                        let valorHFalha = parseFloat(Variaveis[HistFalha]["valor"]);
+
+
                             if ((valorSP - valorHFunc) <= Valor && Valor <= (valorSP + valorHFunc)) {
                                 Variaveis[dados[0]]["cor"] = corOK;
                                 resolve(Variaveis[dados[0]]["cor"]);
@@ -155,6 +155,9 @@ async function verificaStatus(dados) {
                                 Variaveis[dados[0]]["cor"] = corFalha;
                                 resolve(Variaveis[dados[0]]["cor"]);
                             }
+                        } catch (err) {
+                            console.log("Falha ao definir a cor da variável: ", dados[0], " - Erro: ", err)
+
                         } finally {
                             //return Variaveis[dados[0]]["cor"];
                         }
@@ -239,12 +242,12 @@ function tratDados(Variavel, valor) {
 
         // Função para escala do valor
         function escala(dado, escala) {
-            return dado * escala;
+            return parseFloat(dado * escala);
         }
 
         // função para ponto decimal do valor
         function decimal(dado, casasDec) {
-            return dado.toFixed(casasDec);
+            return parseFloat(dado.toFixed(casasDec));
         }
 
         // Função para atualizar Variável
@@ -252,31 +255,35 @@ function tratDados(Variavel, valor) {
             return new Promise(
                 function (resolve, reject) {
 
-
                     var grava = false
 
                     try {
 
                         function escalaDec() {
-                            if (Variaveis[variavelAtlz]["escala"] != undefined) {
+                            try {
+                                if (Variaveis[variavelAtlz]["escala"] != undefined) {
 
-                                if (Variaveis[variavelAtlz]["casasDec"] != null) {
-                                    Variaveis[variavelAtlz]["valor"] = decimal(escala(valorAtlz, Variaveis[variavelAtlz]["escala"]), Variaveis[variavelAtlz]["casasDec"]);
+                                    if (Variaveis[variavelAtlz]["casasDec"] != null) {
+                                        Variaveis[variavelAtlz]["valor"] = decimal(escala(valorAtlz, Variaveis[variavelAtlz]["escala"]), Variaveis[variavelAtlz]["casasDec"]);
+                                    } else {
+                                        Variaveis[variavelAtlz]["valor"] = escala(valorAtlz, Variaveis[variavelAtlz]["escala"]);
+                                    }
+                                    grava = true
                                 } else {
-                                    Variaveis[variavelAtlz]["valor"] = escala(valorAtlz, Variaveis[variavelAtlz]["escala"]);
+                                    if (Variaveis[variavelAtlz]["casasDec"] != null) {
+                                        Variaveis[variavelAtlz]["valor"] = decimal(valorAtlz, Variaveis[variavelAtlz]["casasDec"]);
+                                    }
+                                    else {
+                                        Variaveis[variavelAtlz]["valor"] = valorAtlz
+    
+                                    }
+                                    grava = true
                                 }
-                                grava = true
-                            } else {
-                                if (Variaveis[variavelAtlz]["casasDec"] != null) {
-                                    Variaveis[variavelAtlz]["valor"] = decimal(valorAtlz, Variaveis[variavelAtlz]["casasDec"]);
-                                }
-                                else {
-                                    Variaveis[variavelAtlz]["valor"] = valorAtlz
-
-                                }
-                                grava = true
+                                return [Variaveis[variavelAtlz]["valor"], grava]
+                            } catch (err) {
+                                console.log("falha ao gravar variável: ", variavelAtlz, " - Erro: ", err)
                             }
-                            return [Variaveis[variavelAtlz]["valor"], grava]
+
                         }
 
                         function fCondBD(callback) {
@@ -391,9 +398,10 @@ function tratDados(Variavel, valor) {
 
                                 verificaStatus(Variavel, valor).then(
                                     function (res) {
+                                        
                                         let tcor = res
                                         Variaveis[Variavel[0]]["cor"] = tcor
-                                        //console.log("Cor atualizada: ", tcor)
+
                                         try {
                                             socketFl.atualizaCliente(Variavel, val, tcor).then(
                                                 function (res) {

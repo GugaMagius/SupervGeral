@@ -22,7 +22,7 @@ enviaEmail( // Chama função e envia e-mail
 */
 
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
-const clientPLCecoat = new ads.Client({
+const clientPLC = new ads.Client({
     targetAmsNetId: '5.42.86.72.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
     targetAdsPort: 851,
     autoReconnect: false
@@ -32,7 +32,7 @@ const clientPLCecoat = new ads.Client({
 ///* #Teste!
 
 // Opção para conexão sem o ADS da Beckhoff
-// const clientPLCecoat = new ads.Client({
+// const clientPLC = new ads.Client({
 //     localAmsNetId: '10.41.2.31.1.1',  //'192.168.23.130.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
 //     localAdsPort: 32750,                    //Can be anything that is not used
 //     targetAmsNetId: '5.42.86.72.1.1',       // Target CLP Ecoat
@@ -44,7 +44,7 @@ const clientPLCecoat = new ads.Client({
 // })
 
 
-module.exports.clientPLCecoat = clientPLCecoat
+module.exports.clientPLC = clientPLC
 //*/
 
 function falhaConexao(msg) {
@@ -56,20 +56,20 @@ function falhaConexao(msg) {
 
 }
 
-
 iVerifPLC = setInterval(verificaPLC, 2000);
+
 
 async function verificaPLC() {
 
     try {
 
-        let respStatus = await clientPLCecoat.readPlcRuntimeState();
+        let respStatus = await clientPLC.readPlcRuntimeState();
 
         if (respStatus.adsState !== 5) {
 
             let msgErro = 'CLP do E-coat desconectado: ' + respStatus
             falhaConexao(msgErro)
-            clientPLCecoat.disconnect();
+            clientPLC.disconnect();
 
         } else {
 
@@ -94,14 +94,14 @@ function conectar() {
     try {
 
         /* Provisorio
-        clientPLCecoat.unsubscribeAll().catch(function (err) {
+        clientPLC.unsubscribeAll().catch(function (err) {
             let msgErro = "Falha ao apagar subscrição de variáveis no CLP do E-coat: " + err
             console.log(msgErro)
         })
         */
 
 
-        clientPLCecoat.connect()
+        clientPLC.connect()
             .then((resp) => {
 
                 socketIO.statusConnect.ecoat = true;
@@ -121,8 +121,8 @@ function conectar() {
 
                             if (Variavel[1].modulo === "PLCecoat") {
 
-                                clientPLCecoat.subscribe(Variavel[1].endereco, (data, sub) => {
-                                    //Note: The sub parameter is the same as returned by clientPLCecoat.subcribe()
+                                clientPLC.subscribe(Variavel[1].endereco, (data, sub) => {
+                                    //Note: The sub parameter is the same as returned by clientPLC.subcribe()
                                     try {
                                         main.tratDados(Variavel, data.value);
                                     } catch (err) {

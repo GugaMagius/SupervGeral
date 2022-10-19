@@ -66,8 +66,6 @@
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
                             @click="apagaContato(index)" />
 
-
-
                     </div>
                 </span>
 
