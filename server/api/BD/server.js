@@ -4,7 +4,7 @@ var sql = require("mssql");
 const config = require('../../configBD').config // Configurações de acesso ao Banco de Dados
 
 function insertBD(tabela, valor, param1, param2) {
-    //console.log("valores a serem inseridos na tabela: ", tabela, "Valor: ", valor, "Parametro1: ", param1, "Parametro2: ", param2)
+    console.log("valores a serem inseridos na tabela: ", tabela, "Valor: ", valor, "Parametro1: ", param1, "Parametro2: ", param2)
     // // connect to your database
     // return //#teste
 
@@ -70,7 +70,7 @@ function insertBD(tabela, valor, param1, param2) {
                 }
 
                 function inserirValor() {
-                    let stringLog = `INSERT INTO ${tabela} VALUES('${data_conv}','${valor}') `
+                    let stringLog = `INSERT INTO ${tabela} VALUES('${data_conv}','${isNaN(valor)?0:valor}') `
                     //console.log("INSERINDO VALOR NA TABELA - STRING: ", stringLog)
 
                     try {

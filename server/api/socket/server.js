@@ -101,8 +101,6 @@ io.on('connection', (socket) => {
 
     storage.getLS("contatos").then((res) => {
 
-        console.log("lista de contatos: ", res)
-
         socket.emit("contatos", res)
 
     })

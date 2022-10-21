@@ -20,12 +20,15 @@ var contatos = {} // Lista de contatos para envio de alertas
 
 //importa lista de contatos do Storage
 storage.getLS("contatos").then(res => {
+
     contatos = res;
 
 })
 
 storage.getLS("config").then((resp) => {
     Variaveis = resp
+
+    iniciarBD(); // Inicializa variáveis do BD
 })
 
 // função para listar variáveis e seus status para outros módulos
@@ -62,7 +65,15 @@ function verificaFalhas() {
 
                 delete Falhas[element]; // excluí falha da lista
 
-                socketFl.atualizaFalhas(Falhas)
+                try {
+
+                    socketFl.atualizaFalhas(Falhas)
+
+                } catch (err) {
+                    let msgErro = "Não foi possível atualizar Falhas no cliente!!!" + err
+                    bd.insertBD("log", msgErro)
+                    console.log(msgErro)
+                }
 
             }
 
@@ -137,12 +148,12 @@ async function verificaStatus(dados) {
 
                     } else {
                         try {
-                        let SP = Variaveis[dados[0]]["SetPoint"];
-                        let valorSP = parseFloat(Variaveis[SP]["valor"]);
-                        let HistFunc = Variaveis[dados[0]]["hist_func"];
-                        let valorHFunc = parseFloat(Variaveis[HistFunc]["valor"]);
-                        let HistFalha = Variaveis[dados[0]]["hist_falha"];
-                        let valorHFalha = parseFloat(Variaveis[HistFalha]["valor"]);
+                            let SP = Variaveis[dados[0]]["SetPoint"];
+                            let valorSP = parseFloat(Variaveis[SP]["valor"]);
+                            let HistFunc = Variaveis[dados[0]]["hist_func"];
+                            let valorHFunc = parseFloat(Variaveis[HistFunc]["valor"]);
+                            let HistFalha = Variaveis[dados[0]]["hist_falha"];
+                            let valorHFalha = parseFloat(Variaveis[HistFalha]["valor"]);
 
 
                             if ((valorSP - valorHFunc) <= Valor && Valor <= (valorSP + valorHFunc)) {
@@ -180,12 +191,12 @@ module.exports.verificaStatus = verificaStatus
 
 function iniciarBD() {
     for (const Variavel of Object.entries(Variaveis)) {
+        console.log("Variavel: ", Variavel, " - PeriodoBD: ", Variavel[1].periodoBD)
         // Inicia gravação automática para as variáveis de gravação cíclica => "periodoBD > 0"
         if (Variavel[1].periodoBD > 0) {
             //console.log("INICIANDO SETINTERVAL PARA A VARIAVEL: ", Variavel[0], " Periodo: ", Variavel[1].periodoBD, " valor: ", Variaveis[Variavel[0]]["valor"])
             setInterval(atualizaBD, parseInt(Variavel[1].periodoBD) * parseInt(1000), Variavel[0])
         }
-
 
         // LIMPEZA DO BANCO DE DADOS
         // Calculo das datas de corte
@@ -207,8 +218,7 @@ function iniciarBD() {
 
     }
 }
-
-iniciarBD();
+module.exports.iniciarBD = iniciarBD;
 
 
 function atualizaBD(nomeVariavel) {
@@ -275,7 +285,7 @@ function tratDados(Variavel, valor) {
                                     }
                                     else {
                                         Variaveis[variavelAtlz]["valor"] = valorAtlz
-    
+
                                     }
                                     grava = true
                                 }
@@ -398,7 +408,7 @@ function tratDados(Variavel, valor) {
 
                                 verificaStatus(Variavel, valor).then(
                                     function (res) {
-                                        
+
                                         let tcor = res
                                         Variaveis[Variavel[0]]["cor"] = tcor
 
@@ -493,17 +503,17 @@ function monitorIO(Variavel) {
 
     try {
         for (const avisar of Variavel[1].avisar) { // Lista todas as pessoas a serem avisadas
-            for (const resp of contatos.responsavel) { // Lista os responsáveis cadastrados para obter telefone e email
-                console.log(resp.nome + " - " + avisar.nome);
+            for (const [nome, resp] of Object.entries(contatos)) { // Lista os responsáveis cadastrados para obter telefone e email
+                //console.log(nome + " - " + avisar.nome);
                 //console.log(avisar.nome);
-                if (resp.nome == avisar.nome) { // Verifica se o nome para avisar está na lista dos nomes em geral
+                if (nome == avisar.nome) { // Verifica se o nome para avisar está na lista dos nomes em geral
 
                     if (avisar.sms == true) { // Verifica se é para enviar SMS
                         console.log("enviando mensagem SMS...")
                         enviaSMS( // Chama função e envia parâmetros
                             Variavel[0],
                             Variavel[1].mensagem,
-                            resp.nome,
+                            nome,
                             resp.telefone
                         );
                     };
@@ -512,7 +522,7 @@ function monitorIO(Variavel) {
                         enviaTelefone( // Chama função e envia parâmetros
                             Variavel[0],
                             Variavel[1].mensagem,
-                            resp.nome,
+                            nome,
                             resp.telefone
                         );
                     };
@@ -521,7 +531,7 @@ function monitorIO(Variavel) {
                         enviaEmail( // Chama função e envia e-mail
                             Variavel[0],
                             Variavel[1].mensagem,
-                            resp.nome,
+                            nome,
                             resp.email
                         );
                     };
