@@ -119,18 +119,6 @@ io.on('connection', (socket) => {
             socket.emit("inicializaVar", res)
         })
     
-        /*
-
-    var Lista = new Promise(
-        function (resolve, reject) {
-            resolve(main.listaAtualizada())
-        })
-
-
-    Lista.then(function (val) {
-        socket.emit("inicializaVar", val)
-    })
-    */
 
 
 

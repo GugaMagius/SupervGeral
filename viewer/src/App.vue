@@ -25,15 +25,19 @@
 
 <script>
 import { ref } from "vue";
+import packageJson from '../package.json'
 
 export default {
   name: "App",
   mounted: function () {
     this.alturaTela = window.innerHeight;
+    this.versaoViewer = packageJson.version
   },
 
   data() {
     return {
+      versaoViewer: '',
+      versaoServer: '',
       dadosRecebidos: false,
       varWD: "",
       tmpWD: 15000,
@@ -131,6 +135,13 @@ export default {
 
     disconnect() {
       this.isConnected = false;
+    },
+
+    
+    // Resposta com as versões dos servers
+    versao(versao) {
+      console.log("VersãoMES: ", versao, "Versão Viewer: ", this.versaoViewer)
+      this.versaoServer = versao
     },
 
     watchdog(statusConnect) {
