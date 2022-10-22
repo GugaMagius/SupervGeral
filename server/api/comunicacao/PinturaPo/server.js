@@ -22,26 +22,26 @@ enviaEmail( // Chama função e envia e-mail
 */
 
 // Configurações do Target do CLP para acesso via ADS (ADS precisa estar instalado no PC)
-const clientPLC = new ads.Client({
-    targetAmsNetId: '5.88.201.147.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
-    targetAdsPort: 851,
-    autoReconnect: false
-});
+// const clientPLC = new ads.Client({
+//     targetAmsNetId: '5.88.201.147.1.1', //'5.42.86.72.1.1', // Ecoat, '5.88.201.147.1.1', // Pintura pó
+//     targetAdsPort: 851,
+//     autoReconnect: false
+// });
 
 
 
 // #Teste!
 // Opção para conexão sem o ADS da Beckhoff
-// const clientPLC = new ads.Client({
-//     localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
-//     localAdsPort: 32751,                    //Can be anything that is not used
-//     targetAmsNetId: '5.88.201.147.1.1',       // Target CLP Pintura pó/líquida
-//     targetAdsPort: 851,
-//     routerAddress: '10.41.1.67',            //PLC ip address
-//     routerTcpPort: 48898,                   //PLC needs to have this port opened. Test disabling all firewalls if problems
-//     allowHalfOpen: true,
-//     autoReconnect: false
-// })
+const clientPLC = new ads.Client({
+    localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
+    localAdsPort: 32751,                    //Can be anything that is not used
+    targetAmsNetId: '5.88.201.147.1.1',       // Target CLP Pintura pó/líquida
+    targetAdsPort: 851,
+    routerAddress: '10.41.1.67',            //PLC ip address
+    routerTcpPort: 48898,                   //PLC needs to have this port opened. Test disabling all firewalls if problems
+    allowHalfOpen: true,
+    autoReconnect: false
+})
 
 //
 

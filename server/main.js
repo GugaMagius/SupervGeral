@@ -27,7 +27,6 @@ storage.getLS("contatos").then(res => {
 
 storage.getLS("config").then((resp) => {
     Variaveis = resp
-
     iniciarBD(); // Inicializa variáveis do BD
 })
 
@@ -191,16 +190,17 @@ module.exports.verificaStatus = verificaStatus
 
 function iniciarBD() {
     for (const Variavel of Object.entries(Variaveis)) {
-        console.log("Variavel: ", Variavel, " - PeriodoBD: ", Variavel[1].periodoBD)
+        //console.log("Variavel: ", Variavel, " - PeriodoBD: ", Variavel[1].periodoBD)
         // Inicia gravação automática para as variáveis de gravação cíclica => "periodoBD > 0"
-        if (Variavel[1].periodoBD > 0) {
+        let periodoBDrec = parseInt(Variavel[1].periodoBD)
+        if (periodoBDrec > 0) {
             //console.log("INICIANDO SETINTERVAL PARA A VARIAVEL: ", Variavel[0], " Periodo: ", Variavel[1].periodoBD, " valor: ", Variaveis[Variavel[0]]["valor"])
-            setInterval(atualizaBD, parseInt(Variavel[1].periodoBD) * parseInt(1000), Variavel[0])
+            setInterval(atualizaBD, periodoBDrec * parseInt(1000), Variavel[0])
         }
 
         // LIMPEZA DO BANCO DE DADOS
         // Calculo das datas de corte
-        if (Variavel[1].periodoBD !== null && Variavel[1].periodoBD !== undefined) {
+        if (periodoBDrec !== null && periodoBDrec !== undefined) {
             //bd.limpaBD(Variavel[0],)
             let dataAtual = new Date;
             let dataAnterior = Date.parse(dataAtual) - (((Variavel[1].maxBD) * 1000 * 60 * 60 * 24))
@@ -218,7 +218,6 @@ function iniciarBD() {
 
     }
 }
-module.exports.iniciarBD = iniciarBD;
 
 
 function atualizaBD(nomeVariavel) {

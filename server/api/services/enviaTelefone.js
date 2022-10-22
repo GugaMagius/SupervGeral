@@ -18,24 +18,24 @@ let enviaTelefone = async function (processo, mensagem, responsavel, telefone) {
         //console.log(options)
 
         // #Teste
-        // await client.tts.enviar(telefone, "Atenção " + responsavel + "! " + mensagem, options)
-        //     .then(() => {
-        //         console.log(`O ${responsavel} já foi avisado`)
-        //     })
-        //     .catch((err) => {
-        //         let msgErro = "Erro de conexão com o telefone: " + telefone + JSON.stringify(err, null, 4)
-        //         console.log(msgErro)
+        await client.tts.enviar(telefone, "Atenção " + responsavel + "! " + mensagem, options)
+            .then(() => {
+                console.log(`O ${responsavel} já foi avisado`)
+            })
+            .catch((err) => {
+                let msgErro = "Erro de conexão com o telefone: " + telefone + JSON.stringify(err, null, 4)
+                console.log(msgErro)
 
-        //         console.log(msgErro);
+                console.log(msgErro);
 
-        //         enviaEmail( // Chama função e envia e-mail
-        //             "Falha de Total Voice", // Assunto do e-mail
-        //             msgErro,
-        //             config.administrador.nome,
-        //             config.administrador.email
-        //         );
+                enviaEmail( // Chama função e envia e-mail
+                    "Falha de Total Voice", // Assunto do e-mail
+                    msgErro,
+                    config.administrador.nome,
+                    config.administrador.email
+                );
 
-        //     });
+            });
             
     } catch (err) {
         console.log("FALHA AO ENVIAR ALERTA POR TELEFONE: ", err)
