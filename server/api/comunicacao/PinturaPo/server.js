@@ -31,9 +31,22 @@ enviaEmail( // Chama função e envia e-mail
 
 
 // #Teste!
-// Opção para conexão sem o ADS da Beckhoff
+// Opção para conexão sem o ADS da Beckhoff para comunicação com o servidor "Desenvolvimento"
+// const clientPLC = new ads.Client({
+//     localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
+//     localAdsPort: 32751,                    //Can be anything that is not used
+//     targetAmsNetId: '5.88.201.147.1.1',       // Target CLP Pintura pó/líquida
+//     targetAdsPort: 851,
+//     routerAddress: '10.41.1.67',            //PLC ip address
+//     routerTcpPort: 48898,                   //PLC needs to have this port opened. Test disabling all firewalls if problems
+//     allowHalfOpen: true,
+//     autoReconnect: false
+// })
+
+
+// Opção para conexão sem o ADS da Beckhoff para comunicação com o servidor "MGU-SERVER06"
 const clientPLC = new ads.Client({
-    localAmsNetId: '10.41.2.31.1.1',                         // '192.168.1.114.1.1',     //Can be anything but needs to be in PLC StaticRoutes.xml file
+    localAmsNetId: '10.69.0.6.1.1',         //Can be anything but needs to be in PLC StaticRoutes.xml file
     localAdsPort: 32751,                    //Can be anything that is not used
     targetAmsNetId: '5.88.201.147.1.1',       // Target CLP Pintura pó/líquida
     targetAdsPort: 851,
